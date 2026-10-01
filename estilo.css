@@ -1,7 +1,220 @@
-h1 {
-  color: blue;
+:root {
+  --fondo: #101522;
+  --fondo-secundario: #182033;
+  --texto: #f4f0e8;
+  --texto-suave: #b8bdc9;
+  --dorado: #e0ad58;
+  --borde: #39445c;
 }
 
-.clase {
-  color: red;
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.cabecera {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  padding: 22px 6%;
+  border-bottom: 1px solid var(--borde);
+  background: #0b0f18;
+}
+
+.cabecera-enlace {
+  color: var(--dorado);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.cabecera-enlace:hover {
+  text-decoration: underline;
+}
+
+.izquierda {
+  justify-self: start;
+}
+
+.centro {
+  justify-self: center;
+}
+
+.derecha {
+  justify-self: end;
+}
+
+main {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.portada {
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+.etiqueta {
+  margin: 0 0 16px;
+  color: var(--dorado);
+  font-size: 0.85rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+  line-height: 1.15;
+}
+
+h1 {
+  max-width: 900px;
+  margin-bottom: 20px;
+  color: var(--texto);
+  font-size: 6rem;
+  letter-spacing: 0.02em;
+}
+
+h2 {
+  margin-bottom: 24px;
+  color: var(--dorado);
+  font-size: 3rem;
+}
+
+h4 {
+  margin-bottom: 24px;
+  color: var(--dorado);
+  font-size: 3rem;
+}
+
+.frase {
+  margin-top: 28px;
+  color: var(--texto-suave);
+  font-size: 1.2rem;
+}
+
+.presentacion {
+  padding: 90px 0;
+  border-top: 1px solid var(--borde);
+}
+
+.imagen-juego {
+  width: 85%;
+  margin: 0 auto 45px;
+  padding: 14px;
+  border: 1px solid var(--dorado);
+  background: var(--fondo-secundario);
+}
+
+.imagen-juego img {
+  display: block;
+  width: 100%;
+  min-height: 400px;
+  object-fit: cover;
+  background: #252c3c;
+}
+
+.descripcion {
+  width: 85%;
+  margin: 0 auto;
+}
+
+.descripcion p {
+  max-width: 900px;
+  color: var(--texto-suave);
+  font-size: 1.05rem;
+}
+
+.equipo {
+  padding: 90px 0;
+  border-top: 1px solid var(--borde);
+}
+
+.autores {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin: 40px 0;
+}
+
+.autor {
+  min-height: 120px;
+  padding: 24px;
+  border: 1px solid var(--borde);
+  background: var(--fondo-secundario);
+}
+
+.autor h3 {
+  margin-bottom: 10px;
+  color: var(--texto);
+  font-size: 1rem;
+}
+
+.autor p,
+.creditos p {
+  margin: 0;
+  color: var(--texto-suave);
+}
+
+.creditos {
+  padding-top: 22px;
+  border-top: 1px solid var(--borde);
+}
+
+.creditos p {
+  margin-bottom: 6px;
+}
+
+h2 em {
+  color: #be5321;
+  
+}
+
+@media (max-width: 750px) {
+  .cabecera {
+    padding: 18px 4%;
+    font-size: 0.85rem;
+  }
+
+  main {
+    width: 88%;
+  }
+
+  .portada {
+    min-height: 430px;
+    padding: 60px 0;
+  }
+
+  h1 {
+    font-size: 3.8rem;
+  }
+
+  h2 {
+    font-size: 2.3rem;
+  }
+
+  .imagen-juego,
+  .descripcion {
+    width: 100%;
+  }
+
+  .imagen-juego img {
+    min-height: 250px;
+  }
+
+  .autores {
+    grid-template-columns: 1fr;
+  }
 }
