@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Proyecto Aura · Grupo 01</title>
-
   <link rel="stylesheet" href="estilo.css">
+  <script src="./lib/phaser.js"></script>
 </head>
 
 <body>
@@ -50,9 +50,7 @@
 
     <section class="presentacion" id="juego">
       <figure class="imagen-juego">
-        <img
-          src="assets/plaza-mewing.png"          
-        >
+        <div id="juego-phaser"></div>
       </figure>
 
       <div class="descripcion">
@@ -78,6 +76,7 @@
         
         </p>
       </div>
+
     </section>
 
     <section class="equipo" id="equipo">
@@ -116,5 +115,7 @@
       </div>
     </section>
   </main>
+
+  <script src="./src/game.js" type="module"></script>
 </body>
 </html>
