@@ -12,11 +12,15 @@ export default class Scene1 extends Phaser.Scene{
     //carga de imagenes, sonidos y recursos
     preload(){
         this.load.image('fondo','assets/plaza-mewing.png');
+
+        //this.load.image('test','assets/7-turnos.png', {frameWidth: 48, frameHeight: 48})
     }
     //creacion de objetos en la escena
     
     create() {
-        this.add.image(0, 0, 'fondo').setOrigin(0, 0);
+        this.fondo = this.add.image(328, 188, 'fondo');
+        this.fondo.setDisplaySize(656, 376);
+        //this.add.sprite(2, 2, 'test')
     }
 
     //actualizacion repetida mientras la escena esta activa
