@@ -10,13 +10,12 @@ export default class SceneCj extends Phaser.Scene{
     }
     //carga de imagenes, sonidos y recursos
     preload(){
-        this.load.image('jugadorCubo', 'assets/gris.png');
     }
     //creacion de objetos en la escena
     create() {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.cameras.main.setBackgroundColor('#ac8ef0')
-        this.playerCube = this.physics.add.image(300, 150, 'jugadorCubo');
+        this.playerCube = this.physics.add.image(300, 150, 'playerCube');
         this.playerCube.setVelocity(0, 0);
         this.playerCube.setDisplaySize(30, 30);
     }
