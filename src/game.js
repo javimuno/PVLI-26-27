@@ -1,8 +1,9 @@
 //configura e inicia Phaser
 
-import MainMenu from '/scenes/mainmenu.js';
+import MainMenu from './scenes/mainmenu.js';
 import Scene1 from './scenes/scene1.js';
 import SceneCj from './scenes/sceneCj.js';
+
 
 let config = {
     type: Phaser.AUTO,
