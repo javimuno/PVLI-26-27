@@ -21,7 +21,6 @@ export default class Scene1 extends Phaser.Scene{
 
     //actualizacion repetida mientras la escena esta activa
     update(){
-
     }
 
 

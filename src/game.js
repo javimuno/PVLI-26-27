@@ -1,6 +1,7 @@
 //configura e inicia Phaser
 
 import Scene1 from './scenes/scene1.js';
+import SceneCj from './scenes/sceneCj.js';
 
 let config = {
     type: Phaser.AUTO,
@@ -23,7 +24,7 @@ let config = {
     },
 
     //nombre de nuestra primera escena
-    scene: [Scene1], 
+    scene: [SceneCj], 
     //fisicas del ejemplo
     physics: {  
         default: 'arcade', //Tenemos físicas simple, arcade
