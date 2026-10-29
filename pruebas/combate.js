@@ -22,7 +22,7 @@ function actualizarPantalla(){
         textoResultado.textContent = 'Combate en curso';
     } else{
         textoTurno.textContent = 'Combate finalizado';
-        textoResultado.textoEnemigo = 'Resultado: '+combate.resultado;
+        textoResultado.textContent = 'Resultado: '+combate.resultado;
     }
 }
 
@@ -32,7 +32,7 @@ function accionJugador(){
 }
 
 function accionEnemigo(){
-    combate.atacarJugador(10);
+    combate.atacarJugador(15);
     actualizarPantalla();
 }
 
