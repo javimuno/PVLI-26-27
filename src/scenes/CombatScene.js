@@ -32,6 +32,19 @@ create(){
     this.botonReinicio.setInteractive({useHandCursor:true});
     this.botonReinicio.on('pointerdown',this.reiniciarCombate,this);
 
+
+    //barras aura - para colores en hexa https://htmlcolorcodes.com/es/
+    //-jugador-
+    this.fondoBarraJugador = this.add.rectangle(10,100,200,8,0x444444); //gris
+    this.fondoBarraJugador.setOrigin(0,0);
+    this.barraJugador = this.add.rectangle(10,100,200,8,0x55cc88); //verde
+    this.barraJugador.setOrigin(0,0);
+    //-enemigo-
+    this.fondoBarraEnemigo = this.add.rectangle(450,100,200,8,0x8A210C);
+    this.fondoBarraEnemigo.setOrigin(0,0);
+    this.barraEnemigo = this.add.rectangle(450,100,200,8,0x55cc88); //rojo oscuro
+    this.barraEnemigo.setOrigin(0,0);
+
 }
 
 
@@ -60,6 +73,9 @@ accionEnemigo(){
 }
 
 actualizarPantalla() {
+
+    this.barraJugador.scaleX = this.combate.auraJugador/this.combate.auraMaximaJugador;
+    this.barraEnemigo.scaleX = this.combate.auraEnemigo/this.combate.auraMaximaEnemigo;
     this.textoJugador.setText(
         'Aura del jugador: ' + this.combate.auraJugador
     );

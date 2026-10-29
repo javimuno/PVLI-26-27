@@ -1,8 +1,10 @@
 export default class Combat {
 
     constructor(){
-        this.auraJugador =100;
-        this.auraEnemigo =100;
+        this.auraMaximaJugador =100;
+        this.auraMaximaEnemigo =100;
+        this.auraJugador = this.auraMaximaJugador;
+        this.auraEnemigo = this.auraMaximaEnemigo;
         this.turno='jugador';
         this.resultado = null;
     }
