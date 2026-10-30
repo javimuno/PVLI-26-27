@@ -11,7 +11,7 @@ export default class Combat {
         this.resultado = null;
     }
 
-    atacarEnemigo(danioBase,resultadoQTE) {
+    atacarEnemigo(danioBase,resultadoQTE='perfecto') {
 
         if(this.resultado!== null){
             return;
@@ -39,7 +39,7 @@ export default class Combat {
 
         
     }
-    atacarJugador(danioBase, resultadoQTE) {
+    atacarJugador(danioBase, resultadoQTE='perfecto') {
 
         if(this.resultado!== null){
             return;
