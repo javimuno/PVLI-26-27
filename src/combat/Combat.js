@@ -2,16 +2,16 @@ import calcularDanioQTE from "./damage.js";
 
 export default class Combat {
 
-    constructor(auraMaximaJugador=100,auraMaximaEnemigo=100){
+    constructor(auraMaximaJugador=100,auraMaximaEnemigo=100,turnoInicial='jugador'){
         this.auraMaximaJugador =auraMaximaJugador;
         this.auraMaximaEnemigo =auraMaximaEnemigo;
         this.auraJugador = this.auraMaximaJugador;
         this.auraEnemigo = this.auraMaximaEnemigo;
-        this.turno='jugador';
+        this.turno=turnoInicial;
         this.resultado = null;
     }
 
-    atacarEnemigo(danioBase,resultadoQTE='perfecto') {
+    atacarEnemigo(danioBase,resultadoQTE) {
 
         if(this.resultado!== null){
             return;
@@ -39,7 +39,7 @@ export default class Combat {
 
         
     }
-    atacarJugador(danioBase, resultadoQTE='perfecto') {
+    atacarJugador(danioBase, resultadoQTE) {
 
         if(this.resultado!== null){
             return;
@@ -50,7 +50,7 @@ export default class Combat {
             return;
         }
 
-        let danio = calcularDanioQTE(danioBase,'perfecto');
+        let danio = calcularDanioQTE(danioBase,resultadoQTE);
         this.auraJugador = this.auraJugador -danio;
 
         if(this.auraJugador<0){
