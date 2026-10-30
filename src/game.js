@@ -3,6 +3,8 @@
 import MainMenu from './scenes/mainmenu.js';
 import Scene1 from './scenes/scene1.js';
 import SceneCj from './scenes/sceneCj.js';
+import CombatScene from './scenes/CombatScene.js';
+import BarQTE from './scenes/barqte.js';
 
 
 let config = {
@@ -26,7 +28,7 @@ let config = {
     },
 
     //nombre de nuestra primera escena
-    scene: [MainMenu, SceneCj], 
+    scene: [MainMenu, BarQTE, SceneCj], 
     //fisicas del ejemplo
     physics: {  
         default: 'arcade', //Tenemos físicas simple, arcade

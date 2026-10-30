@@ -14,6 +14,10 @@ export default class MainMenu extends Phaser.Scene{
         this.load.image('playerCube','assets/gris.png');
         this.load.image('levelPadColor','assets/levelpadColor.png');
         this.load.image('miniMapBack','assets/MiniMap.jpg');
+        this.load.image('bar','assets/score-bar.png');
+        this.load.image('darkBlue','assets/dark-blue.png');
+        this.load.image('lightBlue','assets/light-blue.png');
+        this.load.image('yellow','assets/yellow.png');
 
     }
     //creacion de objetos en la escena
@@ -26,7 +30,7 @@ export default class MainMenu extends Phaser.Scene{
         this.button.setDisplaySize(300, 300);
 
         this.button.on('pointerdown', pointer =>{
-            this.scene.start('sceneCj');
+            this.scene.start('barQTE');
         })
 
     }
