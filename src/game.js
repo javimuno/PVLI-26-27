@@ -31,7 +31,7 @@ let config = {
     physics: {  
         default: 'arcade', //Tenemos físicas simple, arcade
         arcade: { 
-            gravity: { y: 200 }, //Tenemos gravedad, podemos modificarla para aumentar su fuera o disminuirla
+            gravity: { y: 0 }, //Tenemos gravedad, podemos modificarla para aumentar su fuera o disminuirla
             debug: true // Aquí indicamos si queremos que Phaser pinte los cuerpos y fuerzas de los objetos con físicas
         },
         checkCollision: {

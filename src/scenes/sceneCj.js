@@ -1,4 +1,6 @@
 // contiene escena de Prueba de Cristopher
+import PlayerMap from '../playerMap.js';
+import LevelPad from '../levelPad.js';
 
 export default class SceneCj extends Phaser.Scene{
     constructor(){
@@ -13,26 +15,21 @@ export default class SceneCj extends Phaser.Scene{
     }
     //creacion de objetos en la escena
     create() {
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.cameras.main.setBackgroundColor('#ac8ef0')
-        this.playerCube = this.physics.add.image(300, 150, 'playerCube');
-        this.playerCube.setVelocity(0, 0);
-        this.playerCube.setDisplaySize(30, 30);
+        this.background = this.add.image(-40,0, 'miniMapBack').setOrigin(0, 0);
+        this.background.setDisplaySize(700, 400);
+        this.physics.world.setBounds(50, 95, 565, 260);
+
+        this.playerCube = new PlayerMap(this, 100, 150, 'playerCube');
+        this.levelPad1 = new LevelPad(this, 172, 300, 'levelPadColor');
+
+        this.physics.add.collider(this.playerCube, this.levelPad1, (PlayerMap, LevelPad) =>{
+            this.levelPad1.NextLevel('mainMenu') //LLama al método del tipo consumible
+        });
     }
 
     //actualizacion repetida mientras la escena esta activa
     update() {
-        if(this.cursors.down.isDown){
-            this.playerCube.setVelocity(0, 100);
-        }else if(this.cursors.up.isDown){
-            this.playerCube.setVelocity(0, -100);
-        }else if(this.cursors.left.isDown){
-            this.playerCube.setVelocity(-100, 0);
-        }else if(this.cursors.right.isDown){
-            this.playerCube.setVelocity(100, 0);
-        }else{
-            this.playerCube.setVelocity(0, 0);
-        }
+        
     }
 
 

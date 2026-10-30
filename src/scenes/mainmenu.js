@@ -12,7 +12,8 @@ export default class MainMenu extends Phaser.Scene{
         this.load.image('fondo','assets/plaza-mewing.png');
         this.load.image('startButton','assets/startButton.png');
         this.load.image('playerCube','assets/gris.png');
-        
+        this.load.image('levelPadColor','assets/levelpadColor.png');
+        this.load.image('miniMapBack','assets/MiniMap.jpg');
 
     }
     //creacion de objetos en la escena

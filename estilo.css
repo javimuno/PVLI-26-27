@@ -111,7 +111,7 @@ h4 {
 }
 
 .imagen-juego {
-  width: 85%;
+  width: 100%;
   margin: 0 auto 45px;
   padding: 14px;
   border: 1px solid var(--dorado);
@@ -217,4 +217,12 @@ h2 em {
   .autores {
     grid-template-columns: 1fr;
   }
+}
+
+#juego-phaser{
+  width: 100%;
+  aspect-ratio: 656/376; 
+}
+#juego-phaser canvas{
+  display: block;
 }
