@@ -1,11 +1,11 @@
 // contiene escena de Prueba de Cristopher
-import PlayerMap from '../playerMap.js';
-import LevelPad from '../levelPad.js';
+import PlayerMap from '../MiniMapClasses/playerMap.js';
+import LevelPad from '../MiniMapClasses/levelPad.js';
 
-export default class SceneCj extends Phaser.Scene{
+export default class MiniMap extends Phaser.Scene{
     constructor(){
         //constructor del padre
-        super ({key: 'sceneCj'});
+        super ({key: 'minimap'});
     }
     //inicializacion de escenas
     init (){
@@ -23,7 +23,7 @@ export default class SceneCj extends Phaser.Scene{
         this.levelPad1 = new LevelPad(this, 172, 300, 'levelPadColor');
 
         this.physics.add.collider(this.playerCube, this.levelPad1, (PlayerMap, LevelPad) =>{
-            this.levelPad1.NextLevel('mainMenu') //LLama al método del tipo consumible
+            this.levelPad1.NextLevel('barQTE') //LLama al método del tipo consumible
         });
     }
 
