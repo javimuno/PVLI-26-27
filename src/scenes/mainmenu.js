@@ -25,7 +25,7 @@ export default class MainMenu extends Phaser.Scene{
         this.fondo.setDisplaySize(656, 376);
         
         this.button = this.add.sprite(328, 188, 'startButton').setInteractive();
-        this.button.setDisplaySize(300, 300);
+        this.button.setDisplaySize(250, 78);
 
         this.button.on('pointerdown', pointer =>{
             this.scene.start('barQTE');
