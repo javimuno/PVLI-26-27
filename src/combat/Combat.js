@@ -1,24 +1,30 @@
+import calcularDanioQTE from "./damage.js";
+
 export default class Combat {
 
-    constructor(){
-        this.auraMaximaJugador =100;
-        this.auraMaximaEnemigo =100;
+    constructor(auraMaximaJugador=100,auraMaximaEnemigo=100){
+        this.auraMaximaJugador =auraMaximaJugador;
+        this.auraMaximaEnemigo =auraMaximaEnemigo;
         this.auraJugador = this.auraMaximaJugador;
         this.auraEnemigo = this.auraMaximaEnemigo;
         this.turno='jugador';
         this.resultado = null;
     }
 
-    atacarEnemigo(danio) {
+    atacarEnemigo(danioBase,resultadoQTE='perfecto') {
 
         if(this.resultado!== null){
             return;
         }
-        console.log('Ataque del jugador con: ',danio,' puntos de danio');
+        //console.log('Ataque del jugador con: ',danio,' puntos de danio');
 
         if(this.turno!=='jugador'){
             return;
         }
+
+        let danio = calcularDanioQTE(danioBase,resultadoQTE);
+        
+
         this.auraEnemigo = this.auraEnemigo -danio;
 
         if(this.auraEnemigo<0){
@@ -33,16 +39,18 @@ export default class Combat {
 
         
     }
-    atacarJugador(danio) {
+    atacarJugador(danioBase, resultadoQTE='perfecto') {
 
         if(this.resultado!== null){
             return;
         }
-        console.log('Ataque enemigo con: ',danio,' puntos de danio');
+        //console.log('Ataque enemigo con: ',danio,' puntos de danio');
 
         if(this.turno!=='enemigo'){
             return;
         }
+
+        let danio = calcularDanioQTE(danioBase,'perfecto');
         this.auraJugador = this.auraJugador -danio;
 
         if(this.auraJugador<0){

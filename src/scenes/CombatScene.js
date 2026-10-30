@@ -3,11 +3,11 @@ import Combat from '../combat/Combat.js'
 export default class CombatScene extends Phaser.Scene{
 
     constructor(){
-        super({key:'combat'}) //constructor de Combat.js que es de quien hereda
+        super({key:'combat'}) //inicializa escena con constructor padre
     }
 
-init(){
-    this.combate = new Combat();
+init(datos={}){
+    this.combate = new Combat(datos.auraMaximaJugador,datos.auraMaximaEnemigo);
 }
 
 create(){
@@ -17,13 +17,13 @@ create(){
     this.add.text(300,24,'Combate');
      //textos de simulacion
     this.textoJugador = this.add.text(10,80,'Aura del jugador: '+this.combate.auraJugador);
-    this.textoEnemigo = this.add.text(450,80,'Aura del enemigo: '+this.combate.auraEnemigo);
-    this.textoTurno = this.add.text (10,330,'Turno de: '+this.combate.turno);
+    this.textoEnemigo = this.add.text(410,80,'Aura del enemigo: '+this.combate.auraEnemigo);
+    this.textoTurno = this.add.text (24,330,'Turno de: '+this.combate.turno);
     
     //botones
 
     //-ataque jugador-
-    this.botonAtaque=this.add.text(24,230,'atacar(10)');
+    this.botonAtaque=this.add.text(24,230,'Atacar(10)');
     this.botonAtaque.setInteractive({useHandCursor: true});
     this.botonAtaque.on('pointerdown',this.accionJugador,this);
 
@@ -31,6 +31,11 @@ create(){
     this.botonReinicio=this.add.text(24,280,'Reinciar Partida');
     this.botonReinicio.setInteractive({useHandCursor:true});
     this.botonReinicio.on('pointerdown',this.reiniciarCombate,this);
+
+    //volver al menu ppal
+    this.botonMenu = this.add.text(400,350,'Volver al menu principal');
+    this.botonMenu.setInteractive({useHandCursor: true});
+    this.botonMenu.on('pointerdown',this.volverAlMenu,this);
 
 
     //barras aura - para colores en hexa https://htmlcolorcodes.com/es/
@@ -40,10 +45,12 @@ create(){
     this.barraJugador = this.add.rectangle(10,100,200,8,0x55cc88); //verde
     this.barraJugador.setOrigin(0,0);
     //-enemigo-
-    this.fondoBarraEnemigo = this.add.rectangle(450,100,200,8,0x8A210C);
+    this.fondoBarraEnemigo = this.add.rectangle(410,100,200,8,0x8A210C);
     this.fondoBarraEnemigo.setOrigin(0,0);
-    this.barraEnemigo = this.add.rectangle(450,100,200,8,0x55cc88); //rojo oscuro
+    this.barraEnemigo = this.add.rectangle(410,100,200,8,0x55cc88); //rojo oscuro
     this.barraEnemigo.setOrigin(0,0);
+
+    this.actualizarPantalla();
 
 }
 
@@ -59,10 +66,10 @@ accionJugador() {
     }
 
 
-    this.combate.atacarEnemigo(30);
+    this.combate.atacarEnemigo(10,'bien');
     this.actualizarPantalla();
 
-    if(this.combate.resultado===null){
+    if(this.combate.resultado===null&&this.combate.turno==='enemigo'){
         this.time.delayedCall(800,this.accionEnemigo,[],this);
     }
 }
@@ -77,11 +84,11 @@ actualizarPantalla() {
     this.barraJugador.scaleX = this.combate.auraJugador/this.combate.auraMaximaJugador;
     this.barraEnemigo.scaleX = this.combate.auraEnemigo/this.combate.auraMaximaEnemigo;
     this.textoJugador.setText(
-        'Aura del jugador: ' + this.combate.auraJugador
+        'Aura del jugador: ' + this.combate.auraJugador+'/'+this.combate.auraMaximaJugador
     );
 
     this.textoEnemigo.setText(
-        'Aura del enemigo: ' + this.combate.auraEnemigo
+        'Aura del enemigo: ' + this.combate.auraEnemigo+'/'+this.combate.auraMaximaEnemigo
     );
 
     
@@ -95,9 +102,24 @@ actualizarPantalla() {
         this.textoTurno.setText('Turno: ' + this.combate.turno);
 
     }
+
+    //<- Menu ppal
+    this.botonMenu.setVisible(
+        this.combate.resultado!==null
+    )
 }
 
 reiniciarCombate(){
-    this.scene.restart();
+    this.scene.restart({auraMaximaJugador:125,
+        auraMaximaEnemigo:135
+    });
+}
+
+volverAlMenu(){
+    if(this.combate.resultado===null){
+        return;
+    }
+
+    this.scene.start('mainMenu')
 }
 }
