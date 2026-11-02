@@ -64,6 +64,10 @@ export default class Combat {
         }
 
         let danio = calcularDanioQTE(danioBase,resultadoQTE);
+
+        if (danio === null) {
+        return;
+}
         this.auraJugador = this.auraJugador -danio;
 
         if (this.auraJugador < 0) {

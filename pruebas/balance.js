@@ -5,7 +5,7 @@
 | Difícil       | 16–20     | 30 %  | 35 % | 35 %     | */
 
 import Combat from '../src/combat/Combat.js';
-import sorteoCalidad, {
+import sortearCalidad, {
     probabilidades
 } from '../src/combat/quality.js';
 

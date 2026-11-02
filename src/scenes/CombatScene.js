@@ -1,5 +1,6 @@
 import Combat from '../combat/Combat.js'
 import sorteoCalidad from '../combat/quality.js';
+import calcularDanioQTE from '../combat/damage.js';
 
 
 //Muestra el estado del combate y transforma los inputs  en las acciones
@@ -107,10 +108,13 @@ accionJugador(indice) {
         return;
     }
 
+    let danio = calcularDanioQTE(ataque.danioBase, calidad);
+
     this.textoAccionJugador.setText(
     'Jugador: ' + ataque.familia + ' / ' +
-    ataque.dificultad + ' / ' + calidad
-)
+    ataque.dificultad + ' / ' + calidad +
+    ' (daño: ' + danio + '/' + ataque.danioBase + ')'
+    );
 
     this.textoAccionEnemigo.setText('');
 
@@ -149,10 +153,13 @@ accionEnemigo() {
         calidad
     );
 
+    let danio = calcularDanioQTE(ataque.danioBase, calidad);
+
     this.textoAccionEnemigo.setText(
     'Enemigo: ' + ataque.familia + ' / ' +
-    ataque.dificultad + ' / ' + calidad
-);
+    ataque.dificultad + ' / ' + calidad +
+    ' (daño: ' + danio + '/' + ataque.danioBase + ')'
+    );
 
     this.actualizarPantalla();
 }
