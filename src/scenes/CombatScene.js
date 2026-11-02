@@ -1,5 +1,11 @@
 import Combat from '../combat/Combat.js'
+import sorteoCalidad from '../combat/quality.js';
 
+
+//Muestra el estado del combate y transforma los inputs  en las acciones
+//que rigen toda la logica, tanto del jugador como del enemigo aunque ele 
+//enemigo funcione de manera automatica y sus acciones sean la respuesta
+//a lo que hace el jugador
 export default class CombatScene extends Phaser.Scene{
 
     constructor(){
@@ -23,9 +29,32 @@ create(){
     //botones
 
     //-ataque jugador-
-    this.botonAtaque=this.add.text(24,230,'Atacar(10)');
-    this.botonAtaque.setInteractive({useHandCursor: true});
-    this.botonAtaque.on('pointerdown',this.accionJugador,this);
+    this.textoAccionJugador = this.add.text(24, 125, '');
+    this.textoAccionEnemigo = this.add.text(24, 150, '');
+
+    this.botonesAtaque = [];
+
+    //aquí se crean los botones y cada boton tiene un indice para luego seleccionar
+    //la variante dentro de la familia de ataque que sea
+    for (let i = 0; i < this.combate.ataquesJugador.length; i++) {
+    let ataque = this.combate.ataquesJugador[i];
+
+    let boton = this.add.text(
+        24 + i * 208,
+        200,
+        ataque.familia + '\n' +
+        ataque.dificultad + '\n' +
+        'Daño base: ' + ataque.danioBase
+    );
+
+    boton.setInteractive({ useHandCursor: true });
+
+    boton.on('pointerdown', () => {
+        this.accionJugador(i);
+    });
+
+    this.botonesAtaque.push(boton);
+    }
 
     //-reinicio-
     this.botonReinicio=this.add.text(24,280,'Reinciar Partida');
@@ -55,31 +84,92 @@ create(){
 }
 
 
-accionJugador() {
-
-    if(this.combate.resultado!==null){
+accionJugador(indice) {
+    if (this.combate.resultado !== null) {
         return;
     }
 
-    if(this.combate.turno !=='jugador'){
+    if (this.combate.turno !== 'jugador') {
         return;
     }
 
+    let ataque = this.combate.ataquesJugador[indice];
 
-    this.combate.atacarEnemigo(10,'bien');
+    //de momento simula el QTE del jugador hasta que los tengamos que así podía probarlo
+    let calidad = sorteoCalidad(ataque);
+
+    let aceptado = this.combate.usarAtaqueJugador(
+        indice,
+        calidad
+    );
+
+    if (!aceptado) {
+        return;
+    }
+
+    this.textoAccionJugador.setText(
+    'Jugador: ' + ataque.familia + ' / ' +
+    ataque.dificultad + ' / ' + calidad
+)
+
+    this.textoAccionEnemigo.setText('');
+
     this.actualizarPantalla();
 
-    if(this.combate.resultado===null&&this.combate.turno==='enemigo'){
-        this.time.delayedCall(800,this.accionEnemigo,[],this);
+    //aquí solo hay respuesta si la pelea continua y el turno es del enemigo
+    if (
+        this.combate.resultado === null &&
+        this.combate.turno === 'enemigo'
+    ) {
+        this.time.delayedCall(
+            800, this.accionEnemigo, [], this
+        );
     }
 }
 
-accionEnemigo(){
-    this.combate.atacarJugador(15);
+accionEnemigo() {
+    if (
+        this.combate.resultado !== null ||
+        this.combate.turno !== 'enemigo'
+    ) {
+        return;
+    }
+
+    let indice = Math.floor(
+        Math.random() * this.combate.ataquesEnemigo.length
+    );
+
+    let ataque = this.combate.ataquesEnemigo[indice];
+    //igual que antes solo que aquí si que se quedará creo más o menos así implementado
+    //porque hace un sorteo del ataque enemigo segun la dificultad y el ataque elegido
+    let calidad = sorteoCalidad(ataque);
+
+    this.combate.atacarJugador(
+        ataque.danioBase,
+        calidad
+    );
+
+    this.textoAccionEnemigo.setText(
+    'Enemigo: ' + ataque.familia + ' / ' +
+    ataque.dificultad + ' / ' + calidad
+);
+
     this.actualizarPantalla();
 }
 
+//refleja toda la información del combate en pantalla, es el feedback visual de momento
+//de info de combate y de botones
 actualizarPantalla() {
+
+    for (let i = 0; i < this.botonesAtaque.length; i++) {
+    let ataque = this.combate.ataquesJugador[i];
+
+    this.botonesAtaque[i].setText(
+        ataque.familia + '\n' +
+        ataque.dificultad + '\n' +
+        'Daño base: ' + ataque.danioBase
+    );
+}
 
     this.barraJugador.scaleX = this.combate.auraJugador/this.combate.auraMaximaJugador;
     this.barraEnemigo.scaleX = this.combate.auraEnemigo/this.combate.auraMaximaEnemigo;
@@ -111,7 +201,7 @@ actualizarPantalla() {
 
 reiniciarCombate(){
     this.scene.restart({auraMaximaJugador:125,
-        auraMaximaEnemigo:135
+        auraMaximaEnemigo:125
     });
 }
 

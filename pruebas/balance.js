@@ -5,13 +5,15 @@
 | Difícil       | 16–20     | 30 %  | 35 % | 35 %     | */
 
 import Combat from '../src/combat/Combat.js';
-import generarVariante from '../src/combat/variants.js';
+import sorteoCalidad, {
+    probabilidades
+} from '../src/combat/quality.js';
 
-let probabilidades = {
-    facil: { fallo: 10, bien: 30, perfecto: 60 },
-    media: { fallo: 20, bien: 35, perfecto: 45 },
-    dificil: { fallo: 30, bien: 35, perfecto: 35 }
-};
+// let probabilidades = {
+//     facil: { fallo: 10, bien: 30, perfecto: 60 },
+//     media: { fallo: 20, bien: 35, perfecto: 45 },
+//     dificil: { fallo: 30, bien: 35, perfecto: 35 }
+// };
 
 function sortearCalidad(ataque) {
     let perfil = probabilidades[ataque.dificultad];
@@ -36,6 +38,7 @@ function crearOpciones(nombres) {
     ];
 }
 
+//Ejecuta una partida automatica utilizando las reglas de Combat.js
 function simularCombate() {
     let inicio = 'jugador';
 
@@ -45,28 +48,16 @@ function simularCombate() {
 
     let combate = new Combat(100, 100, inicio);
 
-    let ataquesJugador = crearOpciones([
-        'Mirada', 'Pose', 'Aura'
-    ]);
+    let ataquesJugador = combate.ataquesJugador;
 
-    let ataquesEnemigo = crearOpciones([
-        'Enemigo 1', 'Enemigo 2', 'Enemigo 3'
-    ]);
+    let ataquesEnemigo = combate.ataquesEnemigo;
 
-    let pendienteRenovar = null;
+   
     let acciones = 0;
 
+    //limita las acciones para que sea algo relevante
     while (combate.resultado === null && acciones < 500) {
         let actor = combate.turno;
-
-        if (actor === 'jugador' && pendienteRenovar !== null) {
-            let anterior = ataquesJugador[pendienteRenovar];
-
-            ataquesJugador[pendienteRenovar] =
-                generarVariante(anterior.familia);
-
-            pendienteRenovar = null;
-        }
 
         let opciones = ataquesJugador;
 
@@ -82,8 +73,7 @@ function simularCombate() {
         let calidad = sortearCalidad(ataque);
 
         if (actor === 'jugador') {
-            combate.atacarEnemigo(ataque.danioBase, calidad);
-            pendienteRenovar = indice;
+            combate.usarAtaqueJugador(indice,calidad);
         }
         else {
             combate.atacarJugador(ataque.danioBase, calidad);
@@ -135,6 +125,8 @@ function ejecutarPruebas(cantidad) {
 
     for (let i = 0; i < cantidad; i = i + 1) {
         let partida = simularCombate();
+
+        //quien empieza para ver si hay "ventaja" para quien empiece o no
         let grupo = resumen[partida.inicio];
 
         grupo.partidas = grupo.partidas + 1;
@@ -149,6 +141,7 @@ function ejecutarPruebas(cantidad) {
             grupo.sinTerminar = grupo.sinTerminar + 1;
         }
 
+        
         if (partida.resultado !== null) {
             grupo.totalAcciones =
                 grupo.totalAcciones + partida.acciones;
