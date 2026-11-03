@@ -5,6 +5,7 @@ import Scene1 from './scenes/scene1.js';
 import MiniMap from './scenes/miniMap.js';
 import CombatScene from './scenes/CombatScene.js';
 import BarQTE from './scenes/barqte.js';
+import DiscordantQte from './scenes/discordantQTE.js';
 
 
 let config = {
@@ -28,7 +29,7 @@ let config = {
     },
 
     //nombre de nuestra primera escena
-    scene: [MainMenu, BarQTE, MiniMap], 
+    scene: [MainMenu, BarQTE, MiniMap, DiscordantQte], 
     //fisicas del ejemplo
     physics: {  
         default: 'arcade', //Tenemos físicas simple, arcade
