@@ -16,3 +16,24 @@ export default function generarVariante (familia){
         danioBase: numAleatorio(rango.min,rango.max)
     };
 }
+
+// estados
+export function generarVarianteJugador(familia, elementoAnterior = null) {
+    let variante = generarVariante(familia);
+    variante.dificultadBase = variante.dificultad;
+    variante.sobrepensado = false;
+    let elementos = ['fuego', 'hielo', 'veneno'];
+    let opciones = [];
+
+    // Excluimos el elemento de la variante que acaba de consumirse.
+    for (let i = 0; i < elementos.length; i++) {
+        if (elementos[i] !== elementoAnterior) {
+            opciones.push(elementos[i]);
+        }
+    }
+
+    let indice = numAleatorio(0, opciones.length - 1);
+    variante.elemento = opciones[indice];
+
+    return variante;
+}

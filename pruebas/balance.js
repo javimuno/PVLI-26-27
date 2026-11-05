@@ -5,7 +5,7 @@
 | Difícil       | 16–20     | 30 %  | 35 % | 35 %     | */
 
 import Combat from '../src/combat/Combat.js';
-import sortearCalidad, {
+import sorteoCalidad, {
     probabilidades
 } from '../src/combat/quality.js';
 
@@ -15,28 +15,8 @@ import sortearCalidad, {
 //     dificil: { fallo: 30, bien: 35, perfecto: 35 }
 // };
 
-function sortearCalidad(ataque) {
-    let perfil = probabilidades[ataque.dificultad];
-    let numero = Math.random() * 100;
 
-    if (numero < perfil.fallo) {
-        return 'fallo';
-    }
 
-    if (numero < perfil.fallo + perfil.bien) {
-        return 'bien';
-    }
-
-    return 'perfecto';
-}
-
-function crearOpciones(nombres) {
-    return [
-        generarVariante(nombres[0]),
-        generarVariante(nombres[1]),
-        generarVariante(nombres[2])
-    ];
-}
 
 //Ejecuta una partida automatica utilizando las reglas de Combat.js
 function simularCombate() {
@@ -48,39 +28,29 @@ function simularCombate() {
 
     let combate = new Combat(100, 100, inicio);
 
-    let ataquesJugador = combate.ataquesJugador;
-
-    let ataquesEnemigo = combate.ataquesEnemigo;
+  
 
    
     let acciones = 0;
 
     //limita las acciones para que sea algo relevante
     while (combate.resultado === null && acciones < 500) {
-        let actor = combate.turno;
-
-        let opciones = ataquesJugador;
-
-        if (actor === 'enemigo') {
-            opciones = ataquesEnemigo;
-        }
-
+    if (combate.turno === 'jugador') {
         let indice = Math.floor(
-            Math.random() * opciones.length
+            Math.random() * combate.ataquesJugador.length
         );
 
-        let ataque = opciones[indice];
-        let calidad = sortearCalidad(ataque);
+        let ataque = combate.ataquesJugador[indice];
+        let calidad = sorteoCalidad(ataque);
 
-        if (actor === 'jugador') {
-            combate.usarAtaqueJugador(indice,calidad);
-        }
-        else {
-            combate.atacarJugador(ataque.danioBase, calidad);
-        }
-
-        acciones = acciones + 1;
+        combate.usarAtaqueJugador(indice, calidad);
     }
+    else {
+        combate.ejecutarIntencionEnemiga();
+    }
+
+    acciones = acciones + 1;
+}
 
     return {
         inicio: inicio,

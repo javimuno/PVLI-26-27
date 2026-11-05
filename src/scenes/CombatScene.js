@@ -1,6 +1,6 @@
 import Combat from '../combat/Combat.js'
 import sorteoCalidad from '../combat/quality.js';
-import calcularDanioQTE from '../combat/damage.js';
+
 
 
 //Muestra el estado del combate y transforma los inputs  en las acciones
@@ -15,6 +15,11 @@ export default class CombatScene extends Phaser.Scene{
 
 init(datos={}){
     this.combate = new Combat(datos.auraMaximaJugador,datos.auraMaximaEnemigo);
+    //prueba de sobrepensar
+    //this.combate.marcaEnemigo = 'fuego';
+    //this.combate.aplicarSobrepensar();
+    // prr defecto, el resultado del jugador se sigue sorteando
+    this.calidadPrueba = 'aleatorio';
 }
 
 create(){
@@ -22,16 +27,49 @@ create(){
     this.cameras.main.setBackgroundColor('#182033')
 
     this.add.text(300,24,'Combate');
+
+    this.textoCalidadPrueba = this.add.text(
+    24, 46,
+    'QTE simulado: ' + this.calidadPrueba + ' (clic para cambiar)',
+    { fontSize: '13px', color: '#ffd166' }
+    );
+
+    this.textoCalidadPrueba.setInteractive({ useHandCursor: true });
+
+    this.textoCalidadPrueba.on(
+        'pointerdown',
+        this.cambiarCalidadPrueba,
+        this
+    );
      //textos de simulacion
     this.textoJugador = this.add.text(10,80,'Aura del jugador: '+this.combate.auraJugador);
     this.textoEnemigo = this.add.text(410,80,'Aura del enemigo: '+this.combate.auraEnemigo);
     this.textoTurno = this.add.text (24,330,'Turno de: '+this.combate.turno);
+
+    //texto marca
+    this.textoMarca = this.add.text(24, 115, '', {
+    fontSize: '13px',
+    color: '#f4a261'
+    });
+
+    //texto veneno
+    this.textoVeneno = this.add.text(24, 185, '', {
+    fontSize: '12px',
+    color: '#a7df62'    
+    });
+
+    //texto intencion enemiga
+    this.textoIntencion = this.add.text(24, 305, '', {
+    fontSize: '12px',
+    color: '#ffd166'
+    });
     
     //botones
 
     //-ataque jugador-
-    this.textoAccionJugador = this.add.text(24, 125, '');
-    this.textoAccionEnemigo = this.add.text(24, 150, '');
+    this.textoAccionJugador = this.add.text(24, 140, '', { fontSize: '12px' }
+);
+    this.textoAccionEnemigo = this.add.text(24, 165, '');
 
     this.botonesAtaque = [];
 
@@ -45,7 +83,8 @@ create(){
         200,
         ataque.familia + '\n' +
         ataque.dificultad + '\n' +
-        'Daño base: ' + ataque.danioBase
+        'Daño base: ' + ataque.danioBase + '\n' +
+        'Elemento: ' + ataque.elemento
     );
 
     boton.setInteractive({ useHandCursor: true });
@@ -97,7 +136,12 @@ accionJugador(indice) {
     let ataque = this.combate.ataquesJugador[indice];
 
     //de momento simula el QTE del jugador hasta que los tengamos que así podía probarlo
-    let calidad = sorteoCalidad(ataque);
+    let calidad = this.calidadPrueba;
+
+    // solo hay aleatoriedad si no hemos elegido un modo concreto (testeo mas facil)
+    if (calidad === 'aleatorio') {
+        calidad = sorteoCalidad(ataque);
+    }
 
     let aceptado = this.combate.usarAtaqueJugador(
         indice,
@@ -108,12 +152,24 @@ accionJugador(indice) {
         return;
     }
 
-    let danio = calcularDanioQTE(ataque.danioBase, calidad);
+    let accion = this.combate.ultimaAccion;
+    let textoCombo = '';
+
+    if (accion.combo === 'fuego') { 
+        textoCombo = ' | Fuego: +50%';
+    }
+    else if (accion.combo === 'hielo') { 
+    textoCombo = ' | Hielo: congela';
+    }
+    else if (accion.combo === 'veneno' && accion.danioVeneno > 0) {
+    textoCombo = ' | Veneno: -' + accion.danioVeneno + ' ahora';
+    }
 
     this.textoAccionJugador.setText(
-    'Jugador: ' + ataque.familia + ' / ' +
-    ataque.dificultad + ' / ' + calidad +
-    ' (daño: ' + danio + '/' + ataque.danioBase + ')'
+        'Jugador: ' + accion.familia + ' / ' +
+        accion.dificultad + ' / ' + accion.calidad +
+        ' (daño: ' + accion.danioFinal + '/' + accion.danioMaximo + ')' +
+        textoCombo
     );
 
     this.textoAccionEnemigo.setText('');
@@ -132,34 +188,42 @@ accionJugador(indice) {
 }
 
 accionEnemigo() {
-    if (
-        this.combate.resultado !== null ||
-        this.combate.turno !== 'enemigo'
-    ) {
+    let aceptado = this.combate.ejecutarIntencionEnemiga();
+
+    if (!aceptado) {
         return;
     }
 
-    let indice = Math.floor(
-        Math.random() * this.combate.ataquesEnemigo.length
-    );
+    let accion = this.combate.ultimaAccion;
 
-    let ataque = this.combate.ataquesEnemigo[indice];
-    //igual que antes solo que aquí si que se quedará creo más o menos así implementado
-    //porque hace un sorteo del ataque enemigo segun la dificultad y el ataque elegido
-    let calidad = sorteoCalidad(ataque);
+    if (accion.tipo === 'congelado') {
+        this.textoAccionEnemigo.setText(
+            'Enemigo: pierde su acción por Hielo'
+        );
+    }
+    else if (accion.tipo === 'sobrepensar') {
+        if (accion.objetivo === null) {
+            this.textoAccionEnemigo.setText(
+                'Enemigo: Sobrepensar sin efecto'
+            );
+        }
+        else {
+            let objetivo = accion.objetivo;
 
-    this.combate.atacarJugador(
-        ataque.danioBase,
-        calidad
-    );
-
-    let danio = calcularDanioQTE(ataque.danioBase, calidad);
-
-    this.textoAccionEnemigo.setText(
-    'Enemigo: ' + ataque.familia + ' / ' +
-    ataque.dificultad + ' / ' + calidad +
-    ' (daño: ' + danio + '/' + ataque.danioBase + ')'
-    );
+            this.textoAccionEnemigo.setText(
+                'Sobrepensar: ' + objetivo.familia + ' / ' +
+                objetivo.dificultadAnterior + ' -> ' +
+                objetivo.dificultadNueva
+            );
+    }
+}
+    else {
+        this.textoAccionEnemigo.setText(
+            'Enemigo: ' + accion.familia + ' / ' +
+            accion.dificultad + ' / ' + accion.calidad +
+            ' (daño: ' + accion.danioFinal + '/' + accion.danioMaximo + ')'
+        );
+    }
 
     this.actualizarPantalla();
 }
@@ -168,15 +232,76 @@ accionEnemigo() {
 //de info de combate y de botones
 actualizarPantalla() {
 
-    for (let i = 0; i < this.botonesAtaque.length; i++) {
-    let ataque = this.combate.ataquesJugador[i];
+    //intencion enemiga
+    if (this.combate.resultado !== null) {
+    this.textoIntencion.setText('Intención: combate terminado');
+    }
+    else if (this.combate.intencionEnemigo.tipo === 'sobrepensar') {
+        this.textoIntencion.setText(
+            'Intención: Sobrepensar (subirá una dificultad; sin daño)'
+        );
+    }
+    else {
+        let intencion = this.combate.intencionEnemigo;
 
-    this.botonesAtaque[i].setText(
-        ataque.familia + '\n' +
-        ataque.dificultad + '\n' +
-        'Daño base: ' + ataque.danioBase
+        this.textoIntencion.setText(
+            'Intención: ' + intencion.ataque.familia + ' / ' +
+            intencion.ataque.dificultad + ' / hasta ' +
+            intencion.danioMaximo + ' de daño'
+        );
+    }
+
+    //marca de estado
+    if (this.combate.marcaEnemigo === null) {
+    this.textoMarca.setText('Marca enemiga: ninguna');
+    }
+    else {
+        this.textoMarca.setText(
+            'Marca enemiga: ' + this.combate.marcaEnemigo +
+            ' (hasta tu siguiente acción)'
+        );
+    }
+
+    //gestion del veneno
+    if (this.combate.venenoPendiente && this.combate.resultado === null) {
+    this.textoVeneno.setText(
+        'Veneno: 4 Aura pendientes para tu próximo turno'
     );
-}
+    }
+    else if (this.combate.danioVenenoTurno > 0) {
+        this.textoVeneno.setText(
+            'Veneno: -' + this.combate.danioVenenoTurno +
+            ' Aura al comenzar este turno'
+        );
+    }
+    else {
+        this.textoVeneno.setText('Veneno: inactivo');
+    }
+
+
+    //bucle generador de cartas
+    for (let i = 0; i < this.botonesAtaque.length; i++) {
+        let ataque = this.combate.ataquesJugador[i];
+
+        //sobrepensar
+        let textoDificultad = ataque.dificultad;
+
+        if (ataque.sobrepensado) {
+            textoDificultad = ataque.dificultadBase + ' -> ' + ataque.dificultad;
+            this.botonesAtaque[i].setColor('#904fbb');
+        }
+        else {
+            this.botonesAtaque[i].setColor('#ffffff');
+        }
+
+        //boton
+        this.botonesAtaque[i].setText(
+            ataque.familia + '\n' +
+            textoDificultad + '\n' +
+            'Daño base: ' + ataque.danioBase + '\n' +
+            'Elemento: ' + ataque.elemento
+        );
+    }
 
     this.barraJugador.scaleX = this.combate.auraJugador/this.combate.auraMaximaJugador;
     this.barraEnemigo.scaleX = this.combate.auraEnemigo/this.combate.auraMaximaEnemigo;
@@ -218,5 +343,25 @@ volverAlMenu(){
     }
 
     this.scene.start('mainMenu')
+}
+
+// Cambia el resultado de prueba sin consumir el turno.
+cambiarCalidadPrueba() {
+    if (this.calidadPrueba === 'aleatorio') {
+        this.calidadPrueba = 'perfecto';
+    }
+    else if (this.calidadPrueba === 'perfecto') {
+        this.calidadPrueba = 'bien';
+    }
+    else if (this.calidadPrueba === 'bien') {
+        this.calidadPrueba = 'fallo';
+    }
+    else {
+        this.calidadPrueba = 'aleatorio';
+    }
+
+    this.textoCalidadPrueba.setText(
+        'QTE simulado: ' + this.calidadPrueba + ' (clic para cambiar)'
+    );
 }
 }
