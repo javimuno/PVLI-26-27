@@ -113,6 +113,7 @@ Como valores iniciales de balance, tanto Paquito como los enemigos partirán de 
 Los ataques ofensivos utilizan tres rangos de daño. La dificultad determina también la exigencia del QTE asociado al ataque.
 
 | **Dificultad** | **Daño base** |
+| :---: | :---: |
 | Fácil | 10-12 |
 | Media | 13-15 |
 | Difícil | 16-20 |
@@ -127,8 +128,8 @@ La tecla Enter o Espacio se utilizará para confirmar selecciones, mientras que 
 
 Cada QTE utiliza las entradas que mejor se adaptan a su funcionamiento:
 
-| :--- | :--- |
 | **Acción** | **Efecto** |
+| :--- | :--- |
 | Selección de ataques  | Flechas direccionales |
 | Confirmar | Enter / Espacio |
 | Mirada dominante | Espacio |
@@ -184,6 +185,7 @@ La dificultad de una variante determina tanto su daño potencial como la complej
 La dificultad no modifica de la misma forma todos los QTE. Cada familia aumenta su complejidad mediante los parámetros propios de su mecánica: velocidad, tamaño de la zona válida, longitud de secuencia, número de piezas o tiempo disponible.
 
 | **Dificultad** | **Daño base** |
+| :---: | :---: |
 | Fácil | 10-12 |
 | Media | 13-15 |
 | Difícil | 16-20 |
