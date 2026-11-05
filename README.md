@@ -465,7 +465,7 @@ Más adelante podemos valorar la inclusión de un sistema de dificultad de juego
 
 # 7. Experiencia de juego
 
-**Enlace ![mini-simulación](https://github.com/javimuno/PVLI-26-27/blob/pages/assets/7-turnos.png) flow de juego en 7 turnos:** (pendiente de
+![mini-simulación](https://github.com/javimuno/PVLI-26-27/blob/pages/assets/7-turnos.png) **flow de juego en 7 turnos:** (pendiente de
 añadir).
 
 Una partida se compone de una sucesión de combates individuales. En cada uno de ellos el jugador debe interpretar el estado actual del enfrentamiento y tomar decisiones a corto y medio plazo.
@@ -494,11 +494,11 @@ Comienza cada combate en posición neutral.
 
 El resultado de las acciones modifica su posición:
 
-  Cuando actúa Paquito          Cuando actúa el enemigo
-  ----------------------------- --------------------------------
-  Perfecto: +1 hacia Paquito.   Perfecto: +1 hacia el enemigo.
-  Bien: sin cambio.             Bien: sin cambio.
-  Fallo: +1 hacia el enemigo.   Fallo: +1 hacia Paquito.
+
+| Cuando actúa Paquito: | Cuando actúa el enemigo: |
+| :--- | :--- |
+| **Perfecto:** +1 hacia Paquito.<br>**Bien:** sin cambio.<br>**Fallo:** +1 hacia el enemigo. | **Perfecto:** +1 hacia el enemigo.<br>**Bien:** sin cambio.<br>**Fallo:** +1 hacia Paquito. |
+
 
 Al alcanzar el extremo correspondiente, el contendiente favorecido obtiene un +1 adicional de daño directo.
 
