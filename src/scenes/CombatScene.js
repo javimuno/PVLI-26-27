@@ -48,6 +48,11 @@ create(){
     fontSize: '13px',
     color: '#f4a261'
     });
+    //texto veneno
+    this.textoVeneno = this.add.text(24, 185, '', {
+    fontSize: '12px',
+    color: '#a7df62'
+});
     
     //botones
 
@@ -146,6 +151,9 @@ accionJugador(indice) {
     else if (accion.combo === 'hielo') { 
     textoCombo = ' | Hielo: congela';
     }
+    else if (accion.combo === 'veneno' && accion.danioVeneno > 0) {
+    textoCombo = ' | Veneno: -' + accion.danioVeneno + ' ahora';
+    }
 
     this.textoAccionJugador.setText(
         'Jugador: ' + accion.familia + ' / ' +
@@ -225,6 +233,24 @@ actualizarPantalla() {
         );
     }
 
+    //gestion del veneno
+    if (this.combate.venenoPendiente && this.combate.resultado === null) {
+    this.textoVeneno.setText(
+        'Veneno: 4 Aura pendientes para tu próximo turno'
+    );
+    }
+    else if (this.combate.danioVenenoTurno > 0) {
+        this.textoVeneno.setText(
+            'Veneno: -' + this.combate.danioVenenoTurno +
+            ' Aura al comenzar este turno'
+        );
+    }
+    else {
+        this.textoVeneno.setText('Veneno: inactivo');
+    }
+
+
+    //bucle generador de cartas
     for (let i = 0; i < this.botonesAtaque.length; i++) {
     let ataque = this.combate.ataquesJugador[i];
 

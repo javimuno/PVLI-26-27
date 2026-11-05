@@ -12,6 +12,8 @@ export default class Combat {
         this.ultimaAccion = null; //para mostrarla
         this.marcaEnemigo = null;
         this.enemigoCongelado = false;
+        this.venenoPendiente = false;
+        this.danioVenenoTurno = 0;
 
         //variantes por familia, con la dificultad y el daño base
         this.ataquesJugador = [
@@ -185,10 +187,22 @@ export default class Combat {
         if(resultadoQTE==='perfecto'&&combo===null){
             this.marcaEnemigo = ataque.elemento;
         }
+
         //combo hielo
         if (combo === 'hielo' && this.resultado === null) {
         this.enemigoCongelado = true;
         }
+        this.ultimaAccion.danioVeneno = 0;
+
+        //combo veneno
+        if (combo === 'veneno' && this.resultado === null) {
+            this.ultimaAccion.danioVeneno = this.aplicarDanioVeneno();
+
+        // si sigue vivo
+        if (this.resultado === null) {
+            this.venenoPendiente = true;
+        }
+}
 
         return true;
     }
@@ -210,12 +224,19 @@ export default class Combat {
 
     // devuelve el turno al jugador
     iniciarTurnoJugador() {
-        if (this.resultado !== null) {
-            return;
-        }
+    if (this.resultado !== null) {
+        return;
+    }
 
-        this.turno = 'jugador';
-        this.renovarAtaqueJugador();
+    this.turno = 'jugador';
+    this.renovarAtaqueJugador();
+    this.danioVenenoTurno = 0;
+
+    if (this.venenoPendiente) {
+        // Consumimos el pendiente para que no vuelva a aplicarse.
+        this.venenoPendiente = false;
+        this.danioVenenoTurno = this.aplicarDanioVeneno();
+    }
     }
 
     // true = congelado objetivo
@@ -241,5 +262,26 @@ export default class Combat {
         this.iniciarTurnoJugador();
 
         return true;
+    }
+
+    // aplica daño de veneno y devuelve cuanto ha hecho de daño
+    aplicarDanioVeneno() {
+        if (this.resultado !== null) {
+            return 0;
+        }
+
+        let auraAnterior = this.auraEnemigo;
+        this.auraEnemigo = this.auraEnemigo - 4;
+
+        if (this.auraEnemigo < 0) {
+            this.auraEnemigo = 0;
+        }
+
+        //por si el veneno es el que mata
+        if (this.auraEnemigo === 0) {
+            this.resultado = 'victoria';
+        }
+
+        return auraAnterior - this.auraEnemigo;
     }
 }
