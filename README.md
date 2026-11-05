@@ -112,11 +112,10 @@ Como valores iniciales de balance, tanto Paquito como los enemigos partirán de 
 
 Los ataques ofensivos utilizan tres rangos de daño. La dificultad determina también la exigencia del QTE asociado al ataque.
 
-  Dificultad     Daño base
-  ------------ -----------
-  Fácil             10--12
-  Media             13--15
-  Difícil           16--20
+| **Dificultad** | **Daño base** |
+| Fácil | 10-12 |
+| Media | 13-15 |
+| Difícil | 16-20 |
 
 Las cifras se consideran valores iniciales sujetos a balance durante el desarrollo, pero constituyen la referencia utilizada para diseñar y probar el sistema.
 
@@ -128,15 +127,15 @@ La tecla Enter o Espacio se utilizará para confirmar selecciones, mientras que 
 
 Cada QTE utiliza las entradas que mejor se adaptan a su funcionamiento:
 
-  Acción                     Entrada principal
-  -------------------------- -----------------------------
-  Selección de ataques       Flechas direccionales
-  Confirmar                  Enter / Espacio
-  Mirada dominante           Espacio
-  Pose imposible             Flechas direccionales
-  Aura Carcassoneal          Letras y números mostrados
-  Improvisación Protectora   Entrada indicada por el QTE
-  Gashapon                   Tecla indicada en pantalla
+| :--- | :--- |
+| **Acción** | **Efecto** |
+| Selección de ataques  | Flechas direccionales |
+| Confirmar | Enter / Espacio |
+| Mirada dominante | Espacio |
+| Pose imposible | Flechas direccionales |
+| Aura Carcassoneal | Letras y números mostrados |
+| Improvisación Protectora | Entrada indicada por el QTE |
+| Gashapon | Tecla indicada en pantalla |
 
 El juego mostrará siempre visualmente las entradas esperadas, evitando que el jugador necesite memorizar combinaciones externas al contexto de cada acción.
 
@@ -184,11 +183,10 @@ La dificultad de una variante determina tanto su daño potencial como la complej
 
 La dificultad no modifica de la misma forma todos los QTE. Cada familia aumenta su complejidad mediante los parámetros propios de su mecánica: velocidad, tamaño de la zona válida, longitud de secuencia, número de piezas o tiempo disponible.
 
-  Dificultad     Daño base
-  ------------ -----------
-  Fácil             10--12
-  Media             13--15
-  Difícil           16--20
+| **Dificultad** | **Daño base** |
+| Fácil | 10-12 |
+| Media | 13-15 |
+| Difícil | 16-20 |
 
 ## 4.4 Resultado de los QTE
 
@@ -263,18 +261,13 @@ Si se vuelve a aplicar el mismo elemento, se activa su combo elemental y la marc
 
 Los efectos iniciales son:
 
-  -----------------------------------------------------------------------
-  Combo                               Resultado
-  ----------------------------------- -----------------------------------
-  🔥 Fuego + Fuego                    El segundo ataque inflige un 50 %
-                                      de daño adicional.
-
-  ❄️ Hielo + Hielo                    El enemigo pierde su próxima
-                                      acción.
-
-  ☠️ Veneno + Veneno                  Inflige 4 Aura al activarse y otros
-                                      4 Aura en el siguiente turno.
-  -----------------------------------------------------------------------
+| **Combo** | **Resultado** |
+| :--- | :--- |
+| 🔥 Fuego + Fuego | El segundo ataque inflige un 50 % de daño
+adicional |
+| ❄️ Hielo + Hielo | El enemigo pierde su próxima acción |
+| ☠️ Veneno + Veneno | Inflige 4 Aura al activarse y otros 4 Aura en
+el siguiente turno |
 
 ## 4.9 Improvisación Protectora
 
@@ -375,11 +368,13 @@ Internamente, cada activación se programa tras un intervalo pseudoaleatorio ini
 
 Cuando llega el momento de activación, el ciclo se detiene y aparece uno de los siguientes efectos:
 
-  Bonus          Efecto
-  -------------- --------------------------------------
-  Recuperación   +2 Aura
-  Impulso        +2 daño al siguiente ataque
-  Protección     −2 daño del siguiente ataque enemigo
+
+| **Bonus** | **Efecto** |
+| :--- | :--- |
+| Recuperación | +2 Aura |
+| Impulso | +2 Daño al siguiente ataque |
+| Protección | -2 Daño del siguiente ataque enemigo |
+
 
 Junto al potenciador aparece una tecla aleatoria y el jugador dispone de 2 segundos para pulsarla.
 
@@ -387,7 +382,12 @@ Si reacciona correctamente, obtiene el bonus. Si no lo hace a tiempo, la oportun
 
 El Aura nunca puede superar su máximo.
 
-Durante cualquier QTE, el ciclo del Gashapon se pausa y no puede producirse una activación, evitando que dos mecánicas soliciten entradas simultáneamente.
+Durante cualquier QTE, el ciclo del Gashapon se pausa y no puede producirse una activación, evitando que dos mecánicas soliciten entradas simultáneamente. Ejemplo:
+
+| **Ciclando** | **Oportunidad** | **Éxito** | **Error** |
+| :--- | :--- | :--- | :--- |
+| 🎰 (¿?¿?¿?¿) | 🎰 (+2 Aura) <br> - Pulsa E - 2 s | +2 Aura | Sin efecto |
+
 
 # 5. Mundo del juego
 
@@ -415,6 +415,8 @@ Los obstáculos en nuestro juego son los distintos enemigos que hay que derrotar
 ## 5.3 Niveles
 
 Como niveles tendremos los distintos combates con enemigos intermedios antes de llegar al jefe final. Provisionalmente y con la intención de hacer enemigos y un sistema de combate relativamente complejo y elaborado, con una dificultad incremental, tendremos a dos enemigos y al jefe final. Cada uno de ellos distinto del resto y más complejo que el anterior.
+
+Para seleccionar los niveles habrá un mapa principal donde se encontrará el jugador y el acceso a los 3 niveles. Al principio solo el primer nivel estará disponible. Para llegar al segundo nivel, el jugador debe de haber superado antes el primer nivel y así mismo este segundo nivel debe completarse para poder desbloquear el nivel final.
 
 **Enemigo 1 → Enemigo 2 → Jefe final.**
 
