@@ -42,12 +42,19 @@ create(){
     this.textoJugador = this.add.text(10,80,'Aura del jugador: '+this.combate.auraJugador);
     this.textoEnemigo = this.add.text(410,80,'Aura del enemigo: '+this.combate.auraEnemigo);
     this.textoTurno = this.add.text (24,330,'Turno de: '+this.combate.turno);
+
+    //texto marca
+    this.textoMarca = this.add.text(24, 115, '', {
+    fontSize: '13px',
+    color: '#f4a261'
+    });
     
     //botones
 
     //-ataque jugador-
-    this.textoAccionJugador = this.add.text(24, 125, '');
-    this.textoAccionEnemigo = this.add.text(24, 150, '');
+    this.textoAccionJugador = this.add.text(24, 140, '', { fontSize: '12px' }
+);
+    this.textoAccionEnemigo = this.add.text(24, 165, '');
 
     this.botonesAtaque = [];
 
@@ -61,7 +68,8 @@ create(){
         200,
         ataque.familia + '\n' +
         ataque.dificultad + '\n' +
-        'Daño base: ' + ataque.danioBase
+        'Daño base: ' + ataque.danioBase + '\n' +
+        'Elemento: ' + ataque.elemento
     );
 
     boton.setInteractive({ useHandCursor: true });
@@ -117,7 +125,7 @@ accionJugador(indice) {
 
     // solo hay aleatoriedad si no hemos elegido un modo concreto (testeo mas facil)
     if (calidad === 'aleatorio') {
-        calidad = sorteoCalidad(ataque);
+        calidad = sortearCalidad(ataque);
     }
 
     let aceptado = this.combate.usarAtaqueJugador(
@@ -129,12 +137,18 @@ accionJugador(indice) {
         return;
     }
 
-    let danio = this.combate.ultimaAccion.danioFinal;
+    let accion = this.combate.ultimaAccion;
+    let textoCombo = '';
+
+    if (accion.combo === 'fuego') {
+        textoCombo = ' | Fuego: +50%';
+    }
 
     this.textoAccionJugador.setText(
-    'Jugador: ' + ataque.familia + ' / ' +
-    ataque.dificultad + ' / ' + calidad +
-    ' (daño: ' + danio + '/' + ataque.danioBase + ')'
+        'Jugador: ' + accion.familia + ' / ' +
+        accion.dificultad + ' / ' + accion.calidad +
+        ' (daño: ' + accion.danioFinal + '/' + accion.danioMaximo + ')' +
+        textoCombo
     );
 
     this.textoAccionEnemigo.setText('');
@@ -190,15 +204,27 @@ accionEnemigo() {
 //de info de combate y de botones
 actualizarPantalla() {
 
+    //marca de estado
+    if (this.combate.marcaEnemigo === null) {
+    this.textoMarca.setText('Marca enemiga: ninguna');
+    }
+    else {
+        this.textoMarca.setText(
+            'Marca enemiga: ' + this.combate.marcaEnemigo +
+            ' (hasta tu siguiente acción)'
+        );
+    }
+
     for (let i = 0; i < this.botonesAtaque.length; i++) {
     let ataque = this.combate.ataquesJugador[i];
 
     this.botonesAtaque[i].setText(
         ataque.familia + '\n' +
         ataque.dificultad + '\n' +
-        'Daño base: ' + ataque.danioBase
+        'Daño base: ' + ataque.danioBase + '\n' +
+        'Elemento: ' + ataque.elemento
     );
-}
+    }
 
     this.barraJugador.scaleX = this.combate.auraJugador/this.combate.auraMaximaJugador;
     this.barraEnemigo.scaleX = this.combate.auraEnemigo/this.combate.auraMaximaEnemigo;

@@ -1,6 +1,5 @@
 import calcularDanioQTE from "./damage.js";
-import generarVariante from "./variants.js";
-
+import generarVariante, { generarVarianteJugador } from "./variants.js";
 export default class Combat {
 
     constructor(auraMaximaJugador=100,auraMaximaEnemigo=100,turnoInicial='jugador'){
@@ -11,15 +10,26 @@ export default class Combat {
         this.turno=turnoInicial;
         this.resultado = null;
         this.ultimaAccion = null; //para mostrarla
+        this.marcaEnemigo = null;
 
         //variantes por familia, con la dificultad y el daño base
-        this.ataquesJugador = [generarVariante('Mirada'),generarVariante('Pose'),generarVariante('Aura')];
-        this.indiceAtaqueUsado =null; //para ver cual cambia
-        this.ataquesEnemigo = [generarVariante('At.Enemigo 1'),generarVariante('At.Enemigo 2'),generarVariante('At.Enemigo 3')];
+        this.ataquesJugador = [
+            generarVarianteJugador('Mirada'),
+            generarVarianteJugador('Pose'),
+            generarVarianteJugador('Aura')
+        ];       
+
+         this.indiceAtaqueUsado =null; //para ver cual cambia
+
+        this.ataquesEnemigo = [
+            generarVariante('At.Enemigo 1'),
+            generarVariante('At.Enemigo 2'),
+            generarVariante('At.Enemigo 3')
+        ];
     }
 
     //resuelve el ataque dle jugador, devuelve true si es valido 
-    atacarEnemigo(danioBase,resultadoQTE='perfecto') {
+    atacarEnemigo(danioBase,resultadoQTE='perfecto',elemento = null) {
 
         if(this.resultado!== null){
             return false;
@@ -36,6 +46,18 @@ export default class Combat {
         return false;
         }
 
+        let danioMaximo = calcularDanioQTE(danioBase, 'perfecto');
+
+        // Esta elección puede completar un combo de Fuego.
+        if (elemento === 'fuego' && this.marcaEnemigo === 'fuego') {
+            danioMaximo = Math.round(danioMaximo * 1.5);
+
+        // El bonus sólo se consigue si la ejecución es Perfecta.
+        if (resultadoQTE === 'perfecto') {
+            danio = Math.round(danio * 1.5);
+    }
+}
+
         let auraAnterior = this.auraEnemigo;
         this.auraEnemigo = this.auraEnemigo - danio;
 
@@ -48,7 +70,7 @@ export default class Combat {
             actor: 'jugador',
             calidad: resultadoQTE,
             danioBase: danioBase,
-            danioMaximo: calcularDanioQTE(danioBase, 'perfecto'),
+            danioMaximo: danioMaximo,
             danioFinal: danio,
             danioAplicado: auraAnterior - this.auraEnemigo
         };
@@ -128,9 +150,16 @@ export default class Combat {
 
         let ataque = this.ataquesJugador[indice];
 
+        //combo de estado
+        let combo= null;
+        if (resultadoQTE === 'perfecto' && this.marcaEnemigo === ataque.elemento) {
+        combo = ataque.elemento;
+}
+
         let aceptado = this.atacarEnemigo(
-            ataque.danioBase,
-            resultadoQTE
+        ataque.danioBase,
+        resultadoQTE,
+        ataque.elemento
         );
 
         if (!aceptado) {
@@ -142,6 +171,16 @@ export default class Combat {
         // variante de la familia
         this.ultimaAccion.familia = ataque.familia;
         this.ultimaAccion.dificultad = ataque.dificultad;
+        this.ultimaAccion.elemento = ataque.elemento;
+        this.ultimaAccion.combo = combo;
+
+        //aprovechar combo
+        this.marcaEnemigo = null;
+
+        //perfect de otro estado deja ese nuevo estado
+        if(resultadoQTE==='perfecto'&&combo===null){
+            this.marcaEnemigo = ataque.elemento;
+        }
 
         return true;
     }
@@ -155,8 +194,8 @@ export default class Combat {
         let anterior =
             this.ataquesJugador[this.indiceAtaqueUsado];
 
-        this.ataquesJugador[this.indiceAtaqueUsado] =
-            generarVariante(anterior.familia);
+       this.ataquesJugador[this.indiceAtaqueUsado] =
+        generarVarianteJugador(anterior.familia, anterior.elemento);
 
         this.indiceAtaqueUsado = null;
     }
