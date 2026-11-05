@@ -18,7 +18,7 @@ function actualizarPantalla(){
     textoEnemigo.textContent = 'Aura del enemigo: '+ combate.auraEnemigo
 
     if(combate.resultado===null){
-        textoTurno.textContent = 'Turno: '+combate.turno;
+        textoTurno.textContent = 'Turno: '+combate.turno; 
         textoResultado.textContent = 'Combate en curso';
     } else{
         textoTurno.textContent = 'Combate finalizado';

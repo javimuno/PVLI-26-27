@@ -15,6 +15,7 @@ export default class Combat {
         this.enemigoCongelado = false;
         this.venenoPendiente = false;
         this.danioVenenoTurno = 0;
+        this.contadorEnemigo = 0;
 
         //variantes por familia, con la dificultad y el daño base
         this.ataquesJugador = [
@@ -228,21 +229,23 @@ export default class Combat {
 
     // devuelve el turno al jugador
     iniciarTurnoJugador() {
-    if (this.resultado !== null) {
-        return;
-    }
+        if (this.resultado !== null) {
+            return;
+        }
 
-    this.turno = 'jugador';
-    this.renovarAtaqueJugador();
-    this.danioVenenoTurno = 0;
+        this.turno = 'jugador';
+        this.limpiarSobrepensar();
+        this.renovarAtaqueJugador();
 
-    if (this.venenoPendiente) {
-        // Consumimos el pendiente para que no vuelva a aplicarse.
-        this.venenoPendiente = false;
-        this.danioVenenoTurno = this.aplicarDanioVeneno();
-    }
-    //para que sea antes de que el jugador decida
-    this.prepararIntencionEnemigo();
+        this.danioVenenoTurno = 0;
+
+        if (this.venenoPendiente) {
+            // Consumimos el pendiente para que no vuelva a aplicarse.
+            this.venenoPendiente = false;
+            this.danioVenenoTurno = this.aplicarDanioVeneno();
+        }
+        //para que sea antes de que el jugador decida
+        this.prepararIntencionEnemigo();
     }
 
     // true = congelado objetivo
@@ -297,6 +300,15 @@ export default class Combat {
             this.intencionEnemigo = null;
             return;
         }
+         //comprobacion de si han pasado dos acciones
+        if (this.contadorEnemigo === 2) {
+            this.intencionEnemigo = {
+                tipo: 'sobrepensar',
+                danioMaximo: 0
+            };
+
+            return;
+        }
 
         let indice = Math.floor(Math.random() * this.ataquesEnemigo.length);
         let ataque = this.ataquesEnemigo[indice];
@@ -314,7 +326,34 @@ export default class Combat {
             return false;
         }
 
+        //contador de acciones para sobrepensdar
+        this.contadorEnemigo = this.contadorEnemigo + 1;
+
+        if (this.contadorEnemigo === 3) {
+            this.contadorEnemigo = 0;
+        }
+        //si está congelado
         if (this.resolverCongelacion()) {
+            return true;
+        }
+
+        if (this.intencionEnemigo.tipo === 'sobrepensar') {
+            
+            this.ultimaAccion = {
+                actor: 'enemigo',
+                tipo: 'sobrepensar',
+                familia: 'Sobrepensar',
+                danioFinal: 0,
+                danioAplicado: 0,
+                objetivo: null
+            };
+
+            // nueva mano, veneno resuelto y ya luego la nueva carta
+            this.iniciarTurnoJugador();
+
+            // modifica la carta
+            this.ultimaAccion.objetivo = this.aplicarSobrepensar();
+
             return true;
         }
 
@@ -324,5 +363,64 @@ export default class Combat {
         this.atacarJugador(ataque.danioBase, calidad, ataque);
 
         return true;
+    }
+
+    aplicarSobrepensar() {
+    if (this.resultado !== null) {
+        return null;
+    }
+
+    let opciones = [];
+    let opcionesCombo = [];
+
+    for (let i = 0; i < this.ataquesJugador.length; i++) {
+        let ataque = this.ataquesJugador[i];
+
+        if (ataque.dificultad !== 'dificil') {
+            opciones.push(i);
+
+            if (ataque.elemento === this.marcaEnemigo) {
+                opcionesCombo.push(i);
+            }
+        }
+    }
+
+    // Si podemos dificultar un combo, priorizamos esas cartas.
+    if (opcionesCombo.length > 0) {
+        opciones = opcionesCombo;
+    }
+
+    if (opciones.length === 0) {
+        return null;
+    }
+
+    let posicion = Math.floor(Math.random() * opciones.length);
+    let indice = opciones[posicion];
+    let ataque = this.ataquesJugador[indice];
+    let dificultadAnterior = ataque.dificultad;
+
+    if (ataque.dificultad === 'facil') {
+        ataque.dificultad = 'media';
+    }
+    else {
+        ataque.dificultad = 'dificil';
+    }
+
+    ataque.sobrepensado = true;
+
+    return {
+        familia: ataque.familia,
+        dificultadAnterior: dificultadAnterior,
+        dificultadNueva: ataque.dificultad
+    };
+    }
+
+    limpiarSobrepensar() {
+    for (let i = 0; i < this.ataquesJugador.length; i++) {
+        let ataque = this.ataquesJugador[i];
+
+        ataque.dificultad = ataque.dificultadBase;
+        ataque.sobrepensado = false;
+    }
     }
 }

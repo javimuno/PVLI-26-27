@@ -20,6 +20,8 @@ export default function generarVariante (familia){
 // estados
 export function generarVarianteJugador(familia, elementoAnterior = null) {
     let variante = generarVariante(familia);
+    variante.dificultadBase = variante.dificultad;
+    variante.sobrepensado = false;
     let elementos = ['fuego', 'hielo', 'veneno'];
     let opciones = [];
 

@@ -15,6 +15,9 @@ export default class CombatScene extends Phaser.Scene{
 
 init(datos={}){
     this.combate = new Combat(datos.auraMaximaJugador,datos.auraMaximaEnemigo);
+    //prueba de sobrepensar
+    //this.combate.marcaEnemigo = 'fuego';
+    //this.combate.aplicarSobrepensar();
     // prr defecto, el resultado del jugador se sigue sorteando
     this.calidadPrueba = 'aleatorio';
 }
@@ -198,6 +201,22 @@ accionEnemigo() {
             'Enemigo: pierde su acción por Hielo'
         );
     }
+    else if (accion.tipo === 'sobrepensar') {
+        if (accion.objetivo === null) {
+            this.textoAccionEnemigo.setText(
+                'Enemigo: Sobrepensar sin efecto'
+            );
+        }
+        else {
+            let objetivo = accion.objetivo;
+
+            this.textoAccionEnemigo.setText(
+                'Sobrepensar: ' + objetivo.familia + ' / ' +
+                objetivo.dificultadAnterior + ' -> ' +
+                objetivo.dificultadNueva
+            );
+    }
+}
     else {
         this.textoAccionEnemigo.setText(
             'Enemigo: ' + accion.familia + ' / ' +
@@ -216,6 +235,11 @@ actualizarPantalla() {
     //intencion enemiga
     if (this.combate.resultado !== null) {
     this.textoIntencion.setText('Intención: combate terminado');
+    }
+    else if (this.combate.intencionEnemigo.tipo === 'sobrepensar') {
+        this.textoIntencion.setText(
+            'Intención: Sobrepensar (subirá una dificultad; sin daño)'
+        );
     }
     else {
         let intencion = this.combate.intencionEnemigo;
@@ -257,14 +281,26 @@ actualizarPantalla() {
 
     //bucle generador de cartas
     for (let i = 0; i < this.botonesAtaque.length; i++) {
-    let ataque = this.combate.ataquesJugador[i];
+        let ataque = this.combate.ataquesJugador[i];
 
-    this.botonesAtaque[i].setText(
-        ataque.familia + '\n' +
-        ataque.dificultad + '\n' +
-        'Daño base: ' + ataque.danioBase + '\n' +
-        'Elemento: ' + ataque.elemento
-    );
+        //sobrepensar
+        let textoDificultad = ataque.dificultad;
+
+        if (ataque.sobrepensado) {
+            textoDificultad = ataque.dificultadBase + ' -> ' + ataque.dificultad;
+            this.botonesAtaque[i].setColor('#904fbb');
+        }
+        else {
+            this.botonesAtaque[i].setColor('#ffffff');
+        }
+
+        //boton
+        this.botonesAtaque[i].setText(
+            ataque.familia + '\n' +
+            textoDificultad + '\n' +
+            'Daño base: ' + ataque.danioBase + '\n' +
+            'Elemento: ' + ataque.elemento
+        );
     }
 
     this.barraJugador.scaleX = this.combate.auraJugador/this.combate.auraMaximaJugador;
