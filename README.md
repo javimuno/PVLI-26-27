@@ -230,8 +230,8 @@ Reproducir correctamente todos los elementos produce un resultado Perfecto. Alca
 
 ## 4.7 Aura Carcassoneal
 
-![Imagen del Icono de Aura Carcassoneal](assets/md/aura-carcassoneal1.png)
-![Imagen del QTE de Aura Carcassoneal](assets/md/aura-carcassoneal2.png)
+![Imagen del Icono de Aura Carcassoneal](assets/md/aura-carcasoneal1.png)
+![Imagen del QTE de Aura Carcassoneal](assets/md/aura-carcasoneal2.png)
 
 Aura Carcassoneal utiliza un QTE basado en la colocación de piezas hexagonales.
 
@@ -278,8 +278,8 @@ Los efectos iniciales son:
 
 ## 4.9 Improvisación Protectora
 
-![Imagen del Icono de Improvisación Protectora](assets/improvisacion-protectora1.png)
-![Imagen del QTE de Improvisación Protectora](assets/improvisacion-protectora2.png)
+![Imagen del Icono de Improvisación Protectora](assets/md/improvisacion-protectora1.png)
+![Imagen del QTE de Improvisación Protectora](assets/md/improvisacion-protectora2.png)
 
 Improvisación Protectora es una acción defensiva especial y no forma parte de las tres familias ofensivas.
 
@@ -465,7 +465,7 @@ Más adelante podemos valorar la inclusión de un sistema de dificultad de juego
 
 # 7. Experiencia de juego
 
-**Enlace \[![mini-simulación](https://github.com/javimuno/PVLI-26-27/blob/pages/assets/7-turnos.png)\] flow de juego en 7 turnos:** (pendiente de
+**Enlace ![mini-simulación](https://github.com/javimuno/PVLI-26-27/blob/pages/assets/7-turnos.png) flow de juego en 7 turnos:** (pendiente de
 añadir).
 
 Una partida se compone de una sucesión de combates individuales. En cada uno de ellos el jugador debe interpretar el estado actual del enfrentamiento y tomar decisiones a corto y medio plazo.
