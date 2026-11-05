@@ -11,6 +11,7 @@ export default class Combat {
         this.resultado = null;
         this.ultimaAccion = null; //para mostrarla
         this.marcaEnemigo = null;
+        this.enemigoCongelado = false;
 
         //variantes por familia, con la dificultad y el daño base
         this.ataquesJugador = [
@@ -96,6 +97,10 @@ export default class Combat {
         if(this.turno!=='enemigo'){
             return;
         }
+        //salto de turno si está congelado
+        if(this.resolverCongelacion()){            
+            return;
+        }
 
         let danio = calcularDanioQTE(danioBase,resultadoQTE);
 
@@ -131,8 +136,7 @@ export default class Combat {
         this.resultado = 'derrota';
         }
         else {
-            this.turno = 'jugador';
-            this.renovarAtaqueJugador();
+            this.iniciarTurnoJugador();
         }
 
         
@@ -181,6 +185,10 @@ export default class Combat {
         if(resultadoQTE==='perfecto'&&combo===null){
             this.marcaEnemigo = ataque.elemento;
         }
+        //combo hielo
+        if (combo === 'hielo' && this.resultado === null) {
+        this.enemigoCongelado = true;
+        }
 
         return true;
     }
@@ -198,5 +206,40 @@ export default class Combat {
         generarVarianteJugador(anterior.familia, anterior.elemento);
 
         this.indiceAtaqueUsado = null;
+    }
+
+    // devuelve el turno al jugador
+    iniciarTurnoJugador() {
+        if (this.resultado !== null) {
+            return;
+        }
+
+        this.turno = 'jugador';
+        this.renovarAtaqueJugador();
+    }
+
+    // true = congelado objetivo
+    resolverCongelacion() {
+        if (
+            this.resultado !== null ||
+            this.turno !== 'enemigo' ||
+            this.enemigoCongelado === false
+        ) {
+            return false;
+        }
+
+        // consume el efecto de hielo
+        this.enemigoCongelado = false;
+
+        this.ultimaAccion = {
+            actor: 'enemigo',
+            tipo: 'congelado',
+            danioFinal: 0,
+            danioAplicado: 0
+        };
+
+        this.iniciarTurnoJugador();
+
+        return true;
     }
 }

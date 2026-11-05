@@ -140,8 +140,11 @@ accionJugador(indice) {
     let accion = this.combate.ultimaAccion;
     let textoCombo = '';
 
-    if (accion.combo === 'fuego') {
+    if (accion.combo === 'fuego') { 
         textoCombo = ' | Fuego: +50%';
+    }
+    else if (accion.combo === 'hielo') { 
+    textoCombo = ' | Hielo: congela';
     }
 
     this.textoAccionJugador.setText(
@@ -167,11 +170,18 @@ accionJugador(indice) {
 }
 
 accionEnemigo() {
-    if (
-        this.combate.resultado !== null ||
-        this.combate.turno !== 'enemigo'
-    ) {
+
+    if (this.combate.resultado !== null ||this.combate.turno !== 'enemigo'){
         return;
+    }
+    //enemigo congelado
+    if (this.combate.resolverCongelacion()) {
+    this.textoAccionEnemigo.setText(
+        'Enemigo: pierde su acción por Hielo'
+    );
+
+    this.actualizarPantalla();
+    return;
     }
 
     let indice = Math.floor(
