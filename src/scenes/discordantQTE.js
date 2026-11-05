@@ -71,7 +71,7 @@ export default class DiscordantQte extends Phaser.Scene{
             }
         }else {
             this.timeleft = this.time.delayedCall(1000, () => {
-            this.scene.start('mainMenu');
+            this.scene.start('combat');
             })
         } 
         

@@ -29,7 +29,7 @@ let config = {
     },
 
     //nombre de nuestra primera escena
-    scene: [MainMenu, BarQTE, MiniMap, DiscordantQte], 
+    scene: [MainMenu, BarQTE, MiniMap, DiscordantQte, CombatScene], 
     //fisicas del ejemplo
     physics: {  
         default: 'arcade', //Tenemos físicas simple, arcade

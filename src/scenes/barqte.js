@@ -95,7 +95,7 @@ export default class BarQTE extends Phaser.Scene{
         if(this.result){
             this.time.delayedCall(1500, () => {
                 console.log("1,5 segundos despues del ataque");
-                this.scene.start('mainMenu');
+                this.scene.start('discord');
             })
 
             this.timeleft.remove();
