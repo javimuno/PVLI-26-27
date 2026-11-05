@@ -10,6 +10,7 @@ export default class Combat {
         this.auraEnemigo = this.auraMaximaEnemigo;
         this.turno=turnoInicial;
         this.resultado = null;
+        this.ultimaAccion = null; //para mostrarla
 
         //variantes por familia, con la dificultad y el daño base
         this.ataquesJugador = [generarVariante('Mirada'),generarVariante('Pose'),generarVariante('Aura')];
@@ -35,11 +36,22 @@ export default class Combat {
         return false;
         }
 
-        this.auraEnemigo = this.auraEnemigo -danio;
+        let auraAnterior = this.auraEnemigo;
+        this.auraEnemigo = this.auraEnemigo - danio;
 
         if(this.auraEnemigo<0){
             this.auraEnemigo=0;
         }
+
+        // resultado para mostrarlo en escena
+        this.ultimaAccion = {
+            actor: 'jugador',
+            calidad: resultadoQTE,
+            danioBase: danioBase,
+            danioMaximo: calcularDanioQTE(danioBase, 'perfecto'),
+            danioFinal: danio,
+            danioAplicado: auraAnterior - this.auraEnemigo
+        };
 
         if(this.auraEnemigo===0){
             this.resultado='victoria';
@@ -52,7 +64,7 @@ export default class Combat {
     }
 
     //y este resuelve el ataque enemigo y cambia el turno si el jugador no ha perdido
-    atacarJugador(danioBase, resultadoQTE='perfecto') {
+    atacarJugador(danioBase, resultadoQTE = 'perfecto', ataque = null) {
 
         if(this.resultado!== null){
             return;
@@ -68,11 +80,30 @@ export default class Combat {
         if (danio === null) {
         return;
 }
-        this.auraJugador = this.auraJugador -danio;
+        let auraAnterior = this.auraJugador;
+        this.auraJugador = this.auraJugador - danio;
 
         if (this.auraJugador < 0) {
         this.auraJugador = 0;
-    }
+        }
+
+        // igual que en jugador guardamos accion
+        this.ultimaAccion = {
+            actor: 'enemigo',
+            familia: 'Ataque enemigo',
+            dificultad: null,
+            calidad: resultadoQTE,
+            danioBase: danioBase,
+            danioMaximo: calcularDanioQTE(danioBase, 'perfecto'),
+            danioFinal: danio,
+            danioAplicado: auraAnterior - this.auraJugador
+        };
+
+        // completa info
+        if (ataque !== null) {
+            this.ultimaAccion.familia = ataque.familia;
+            this.ultimaAccion.dificultad = ataque.dificultad;
+        }
 
         if (this.auraJugador === 0) {
         this.resultado = 'derrota';
@@ -107,6 +138,10 @@ export default class Combat {
         }
 
         this.indiceAtaqueUsado = indice;
+
+        // variante de la familia
+        this.ultimaAccion.familia = ataque.familia;
+        this.ultimaAccion.dificultad = ataque.dificultad;
 
         return true;
     }

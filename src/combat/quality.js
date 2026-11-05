@@ -5,7 +5,7 @@ export let probabilidades = {
     dificil: { fallo: 30, bien: 35, perfecto: 35 }
 };
 
-export default function sorteoCalidad(ataque) {
+export default function sortearCalidad(ataque) {
     //la dificultad es lo que determina el acierto del ataque
     let acierto = probabilidades[ataque.dificultad];
     let numero = Math.random() * 100;

@@ -15,28 +15,8 @@ import sortearCalidad, {
 //     dificil: { fallo: 30, bien: 35, perfecto: 35 }
 // };
 
-function sortearCalidad(ataque) {
-    let perfil = probabilidades[ataque.dificultad];
-    let numero = Math.random() * 100;
 
-    if (numero < perfil.fallo) {
-        return 'fallo';
-    }
 
-    if (numero < perfil.fallo + perfil.bien) {
-        return 'bien';
-    }
-
-    return 'perfecto';
-}
-
-function crearOpciones(nombres) {
-    return [
-        generarVariante(nombres[0]),
-        generarVariante(nombres[1]),
-        generarVariante(nombres[2])
-    ];
-}
 
 //Ejecuta una partida automatica utilizando las reglas de Combat.js
 function simularCombate() {

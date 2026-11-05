@@ -1,6 +1,6 @@
 import Combat from '../combat/Combat.js'
-import sorteoCalidad from '../combat/quality.js';
-import calcularDanioQTE from '../combat/damage.js';
+import sortearCalidad from '../combat/quality.js';
+
 
 
 //Muestra el estado del combate y transforma los inputs  en las acciones
@@ -15,6 +15,8 @@ export default class CombatScene extends Phaser.Scene{
 
 init(datos={}){
     this.combate = new Combat(datos.auraMaximaJugador,datos.auraMaximaEnemigo);
+    // prr defecto, el resultado del jugador se sigue sorteando
+    this.calidadPrueba = 'aleatorio';
 }
 
 create(){
@@ -22,6 +24,20 @@ create(){
     this.cameras.main.setBackgroundColor('#182033')
 
     this.add.text(300,24,'Combate');
+
+    this.textoCalidadPrueba = this.add.text(
+    24, 46,
+    'QTE simulado: ' + this.calidadPrueba + ' (clic para cambiar)',
+    { fontSize: '13px', color: '#ffd166' }
+    );
+
+    this.textoCalidadPrueba.setInteractive({ useHandCursor: true });
+
+    this.textoCalidadPrueba.on(
+        'pointerdown',
+        this.cambiarCalidadPrueba,
+        this
+    );
      //textos de simulacion
     this.textoJugador = this.add.text(10,80,'Aura del jugador: '+this.combate.auraJugador);
     this.textoEnemigo = this.add.text(410,80,'Aura del enemigo: '+this.combate.auraEnemigo);
@@ -97,7 +113,12 @@ accionJugador(indice) {
     let ataque = this.combate.ataquesJugador[indice];
 
     //de momento simula el QTE del jugador hasta que los tengamos que así podía probarlo
-    let calidad = sorteoCalidad(ataque);
+    let calidad = this.calidadPrueba;
+
+    // solo hay aleatoriedad si no hemos elegido un modo concreto (testeo mas facil)
+    if (calidad === 'aleatorio') {
+        calidad = sorteoCalidad(ataque);
+    }
 
     let aceptado = this.combate.usarAtaqueJugador(
         indice,
@@ -108,7 +129,7 @@ accionJugador(indice) {
         return;
     }
 
-    let danio = calcularDanioQTE(ataque.danioBase, calidad);
+    let danio = this.combate.ultimaAccion.danioFinal;
 
     this.textoAccionJugador.setText(
     'Jugador: ' + ataque.familia + ' / ' +
@@ -146,14 +167,15 @@ accionEnemigo() {
     let ataque = this.combate.ataquesEnemigo[indice];
     //igual que antes solo que aquí si que se quedará creo más o menos así implementado
     //porque hace un sorteo del ataque enemigo segun la dificultad y el ataque elegido
-    let calidad = sorteoCalidad(ataque);
+    let calidad = sortearCalidad(ataque);
 
     this.combate.atacarJugador(
         ataque.danioBase,
-        calidad
+        calidad,
+        ataque
     );
 
-    let danio = calcularDanioQTE(ataque.danioBase, calidad);
+    let danio = this.combate.ultimaAccion.danioFinal;
 
     this.textoAccionEnemigo.setText(
     'Enemigo: ' + ataque.familia + ' / ' +
@@ -218,5 +240,25 @@ volverAlMenu(){
     }
 
     this.scene.start('mainMenu')
+}
+
+// Cambia el resultado de prueba sin consumir el turno.
+cambiarCalidadPrueba() {
+    if (this.calidadPrueba === 'aleatorio') {
+        this.calidadPrueba = 'perfecto';
+    }
+    else if (this.calidadPrueba === 'perfecto') {
+        this.calidadPrueba = 'bien';
+    }
+    else if (this.calidadPrueba === 'bien') {
+        this.calidadPrueba = 'fallo';
+    }
+    else {
+        this.calidadPrueba = 'aleatorio';
+    }
+
+    this.textoCalidadPrueba.setText(
+        'QTE simulado: ' + this.calidadPrueba + ' (clic para cambiar)'
+    );
 }
 }
