@@ -1,5 +1,6 @@
 import calcularDanioQTE from "./damage.js";
 import generarVariante, { generarVarianteJugador } from "./variants.js";
+import sorteoCalidad from "./quality.js";
 export default class Combat {
 
     constructor(auraMaximaJugador=100,auraMaximaEnemigo=100,turnoInicial='jugador'){
@@ -29,6 +30,8 @@ export default class Combat {
             generarVariante('At.Enemigo 2'),
             generarVariante('At.Enemigo 3')
         ];
+        this.intencionEnemigo = null;
+        this.prepararIntencionEnemigo();
     }
 
     //resuelve el ataque dle jugador, devuelve true si es valido 
@@ -119,6 +122,7 @@ export default class Combat {
         // igual que en jugador guardamos accion
         this.ultimaAccion = {
             actor: 'enemigo',
+            tipo: 'ataque',
             familia: 'Ataque enemigo',
             dificultad: null,
             calidad: resultadoQTE,
@@ -237,6 +241,8 @@ export default class Combat {
         this.venenoPendiente = false;
         this.danioVenenoTurno = this.aplicarDanioVeneno();
     }
+    //para que sea antes de que el jugador decida
+    this.prepararIntencionEnemigo();
     }
 
     // true = congelado objetivo
@@ -283,5 +289,40 @@ export default class Combat {
         }
 
         return auraAnterior - this.auraEnemigo;
+    }
+
+    // guarda decission enemiga
+    prepararIntencionEnemigo() {
+        if (this.resultado !== null) {
+            this.intencionEnemigo = null;
+            return;
+        }
+
+        let indice = Math.floor(Math.random() * this.ataquesEnemigo.length);
+        let ataque = this.ataquesEnemigo[indice];
+
+        this.intencionEnemigo = {
+            tipo: 'ataque',
+            ataque: ataque,
+            danioMaximo: calcularDanioQTE(ataque.danioBase, 'perfecto')
+        };
+    }
+
+    // ejecuta intencion enemiga
+    ejecutarIntencionEnemiga() {
+        if (this.resultado !== null || this.turno !== 'enemigo') {
+            return false;
+        }
+
+        if (this.resolverCongelacion()) {
+            return true;
+        }
+
+        let ataque = this.intencionEnemigo.ataque;
+        let calidad = sorteoCalidad(ataque);
+
+        this.atacarJugador(ataque.danioBase, calidad, ataque);
+
+        return true;
     }
 }

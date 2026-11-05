@@ -5,7 +5,7 @@
 | Difícil       | 16–20     | 30 %  | 35 % | 35 %     | */
 
 import Combat from '../src/combat/Combat.js';
-import sortearCalidad, {
+import sorteoCalidad, {
     probabilidades
 } from '../src/combat/quality.js';
 
@@ -28,39 +28,29 @@ function simularCombate() {
 
     let combate = new Combat(100, 100, inicio);
 
-    let ataquesJugador = combate.ataquesJugador;
-
-    let ataquesEnemigo = combate.ataquesEnemigo;
+  
 
    
     let acciones = 0;
 
     //limita las acciones para que sea algo relevante
     while (combate.resultado === null && acciones < 500) {
-        let actor = combate.turno;
-
-        let opciones = ataquesJugador;
-
-        if (actor === 'enemigo') {
-            opciones = ataquesEnemigo;
-        }
-
+    if (combate.turno === 'jugador') {
         let indice = Math.floor(
-            Math.random() * opciones.length
+            Math.random() * combate.ataquesJugador.length
         );
 
-        let ataque = opciones[indice];
-        let calidad = sortearCalidad(ataque);
+        let ataque = combate.ataquesJugador[indice];
+        let calidad = sorteoCalidad(ataque);
 
-        if (actor === 'jugador') {
-            combate.usarAtaqueJugador(indice,calidad);
-        }
-        else {
-            combate.atacarJugador(ataque.danioBase, calidad);
-        }
-
-        acciones = acciones + 1;
+        combate.usarAtaqueJugador(indice, calidad);
     }
+    else {
+        combate.ejecutarIntencionEnemiga();
+    }
+
+    acciones = acciones + 1;
+}
 
     return {
         inicio: inicio,

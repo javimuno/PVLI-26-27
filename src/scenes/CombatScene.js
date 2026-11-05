@@ -1,5 +1,5 @@
 import Combat from '../combat/Combat.js'
-import sortearCalidad from '../combat/quality.js';
+import sorteoCalidad from '../combat/quality.js';
 
 
 
@@ -48,11 +48,18 @@ create(){
     fontSize: '13px',
     color: '#f4a261'
     });
+
     //texto veneno
     this.textoVeneno = this.add.text(24, 185, '', {
     fontSize: '12px',
-    color: '#a7df62'
-});
+    color: '#a7df62'    
+    });
+
+    //texto intencion enemiga
+    this.textoIntencion = this.add.text(24, 305, '', {
+    fontSize: '12px',
+    color: '#ffd166'
+    });
     
     //botones
 
@@ -130,7 +137,7 @@ accionJugador(indice) {
 
     // solo hay aleatoriedad si no hemos elegido un modo concreto (testeo mas facil)
     if (calidad === 'aleatorio') {
-        calidad = sortearCalidad(ataque);
+        calidad = sorteoCalidad(ataque);
     }
 
     let aceptado = this.combate.usarAtaqueJugador(
@@ -178,42 +185,26 @@ accionJugador(indice) {
 }
 
 accionEnemigo() {
+    let aceptado = this.combate.ejecutarIntencionEnemiga();
 
-    if (this.combate.resultado !== null ||this.combate.turno !== 'enemigo'){
+    if (!aceptado) {
         return;
     }
-    //enemigo congelado
-    if (this.combate.resolverCongelacion()) {
-    this.textoAccionEnemigo.setText(
-        'Enemigo: pierde su acción por Hielo'
-    );
 
-    this.actualizarPantalla();
-    return;
+    let accion = this.combate.ultimaAccion;
+
+    if (accion.tipo === 'congelado') {
+        this.textoAccionEnemigo.setText(
+            'Enemigo: pierde su acción por Hielo'
+        );
     }
-
-    let indice = Math.floor(
-        Math.random() * this.combate.ataquesEnemigo.length
-    );
-
-    let ataque = this.combate.ataquesEnemigo[indice];
-    //igual que antes solo que aquí si que se quedará creo más o menos así implementado
-    //porque hace un sorteo del ataque enemigo segun la dificultad y el ataque elegido
-    let calidad = sortearCalidad(ataque);
-
-    this.combate.atacarJugador(
-        ataque.danioBase,
-        calidad,
-        ataque
-    );
-
-    let danio = this.combate.ultimaAccion.danioFinal;
-
-    this.textoAccionEnemigo.setText(
-    'Enemigo: ' + ataque.familia + ' / ' +
-    ataque.dificultad + ' / ' + calidad +
-    ' (daño: ' + danio + '/' + ataque.danioBase + ')'
-    );
+    else {
+        this.textoAccionEnemigo.setText(
+            'Enemigo: ' + accion.familia + ' / ' +
+            accion.dificultad + ' / ' + accion.calidad +
+            ' (daño: ' + accion.danioFinal + '/' + accion.danioMaximo + ')'
+        );
+    }
 
     this.actualizarPantalla();
 }
@@ -221,6 +212,20 @@ accionEnemigo() {
 //refleja toda la información del combate en pantalla, es el feedback visual de momento
 //de info de combate y de botones
 actualizarPantalla() {
+
+    //intencion enemiga
+    if (this.combate.resultado !== null) {
+    this.textoIntencion.setText('Intención: combate terminado');
+    }
+    else {
+        let intencion = this.combate.intencionEnemigo;
+
+        this.textoIntencion.setText(
+            'Intención: ' + intencion.ataque.familia + ' / ' +
+            intencion.ataque.dificultad + ' / hasta ' +
+            intencion.danioMaximo + ' de daño'
+        );
+    }
 
     //marca de estado
     if (this.combate.marcaEnemigo === null) {
