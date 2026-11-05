@@ -19,7 +19,7 @@ export default class MiniMap extends Phaser.Scene{
         this.background.setDisplaySize(700, 400);
         this.physics.world.setBounds(50, 95, 565, 260);
 
-        this.playerCube = new PlayerMap(this, 100, 150, 'playerCube');
+        this.playerCube = new PlayerMap(this, 100, 150, 'minimapchar');
         this.levelPad1 = new LevelPad(this, 172, 300, 'levelPadColor');
 
         this.physics.add.collider(this.playerCube, this.levelPad1, (PlayerMap, LevelPad) =>{
