@@ -20,7 +20,7 @@ export default class CopyQTE extends Phaser.Scene{
 
         this.timeleft = this.time.delayedCall(5000, () => {
             console.log("Fallo");
-            this.scene.start('mainMenu');
+            this.scene.start('combat');
         })
 
         this.terminado = false;
@@ -140,7 +140,7 @@ export default class CopyQTE extends Phaser.Scene{
             this.terminado = true;
             this.timeleft.remove();
             this.time.delayedCall(1500, () => {
-            this.scene.start('minimap');
+            this.scene.start('combat');
         });
     }
 
