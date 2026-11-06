@@ -2,8 +2,11 @@
 
 import MainMenu from './scenes/mainmenu.js';
 import Scene1 from './scenes/scene1.js';
-import SceneCj from './scenes/sceneCj.js';
+import MiniMap from './scenes/miniMap.js';
 import CombatScene from './scenes/CombatScene.js';
+import BarQTE from './scenes/barqte.js';
+import DiscordantQte from './scenes/discordantQTE.js';
+import CopyQTE from './scenes/copyqte.js';
 
 
 let config = {
@@ -27,12 +30,12 @@ let config = {
     },
 
     //nombre de nuestra primera escena
-    scene: [CombatScene,MainMenu, SceneCj], 
+    scene: [MainMenu, BarQTE, MiniMap, DiscordantQte, CombatScene, CopyQTE], 
     //fisicas del ejemplo
     physics: {  
         default: 'arcade', //Tenemos físicas simple, arcade
         arcade: { 
-            gravity: { y: 200 }, //Tenemos gravedad, podemos modificarla para aumentar su fuera o disminuirla
+            gravity: { y: 0 }, //Tenemos gravedad, podemos modificarla para aumentar su fuera o disminuirla
             debug: true // Aquí indicamos si queremos que Phaser pinte los cuerpos y fuerzas de los objetos con físicas
         },
         checkCollision: {
