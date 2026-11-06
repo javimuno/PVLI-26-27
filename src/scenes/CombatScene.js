@@ -18,14 +18,14 @@ init(datos={}){
     
     // prr defecto, el resultado del jugador se sigue sorteando
     this.calidadPrueba = 'aleatorio';
-    this.defensaPrueba = 'aleatorio;'
+    this.defensaPrueba = 'aleatorio';
 }
 
 create(){
 
     this.cameras.main.setBackgroundColor('#182033')
 
-    this.add.text(300,24,'Combate');
+    this.crearPanelesCombate();
 
     this.textoCalidadPrueba = this.add.text(
     24, 46,
@@ -148,7 +148,10 @@ create(){
     this.fondoBarraEnemigo = this.add.rectangle(410,100,200,8,0x8A210C);
     this.fondoBarraEnemigo.setOrigin(0,0);
     this.barraEnemigo = this.add.rectangle(410,100,200,8,0x55cc88); //rojo oscuro
-    this.barraEnemigo.setOrigin(0,0);
+    this.barraEnemigo.setOrigin(0, 0);
+
+    this.ordenarInterfazCombate();
+    this.actualizarPantalla();
 
     this.actualizarPantalla();
 
@@ -325,7 +328,7 @@ actualizarPantalla() {
     //gestion del veneno
     if (this.combate.venenoPendiente && this.combate.resultado === null) {
     this.textoVeneno.setText(
-        'Veneno: 4 Aura pendientes para tu próximo turno'
+        'Veneno: 4 Aura al próximo turno'
     );
     }
     else if (this.combate.danioVenenoTurno > 0) {
@@ -389,6 +392,14 @@ actualizarPantalla() {
     this.botonMenu.setVisible(
         this.combate.resultado!==null
     )
+
+    this.textoCalidadPrueba.setVisible(
+    this.combate.resultado === null
+    );
+
+    this.textoDefensaPrueba.setVisible(
+        this.combate.resultado === null
+    );
 }
 
 reiniciarCombate(){
@@ -477,4 +488,122 @@ cambiarDefensaPrueba() {
         'Defensa simulada: ' + this.defensaPrueba + ' (clic)'
     );
     }
+
+crearPanelesCombate() {
+    // Arena y suelo.
+    this.add.rectangle(16, 52, 624, 126, 0x202d45)
+        .setOrigin(0, 0).setStrokeStyle(1, 0x526078).setDepth(-20);
+
+    this.add.rectangle(17, 145, 622, 32, 0x30424b)
+        .setOrigin(0, 0).setDepth(-19);
+
+    // Panel de intención.
+    this.add.rectangle(220, 60, 216, 78, 0x131d2d)
+        .setOrigin(0, 0).setStrokeStyle(1, 0x8b744d).setDepth(-18);
+
+    this.add.text(328, 10, 'PLAZA DEL MEWING', {
+        fontSize: '12px',
+        color: '#e0ad58'
+    }).setOrigin(0.5, 0);
+
+    // Fondos de las tres cartas ofensivas.
+    this.fondosAtaque = [];
+
+    for (let i = 0; i < this.combate.ataquesJugador.length; i++) {
+        let fondo = this.add.rectangle(
+            16 + i * 152, 244, 144, 88, 0x172334
+        ).setOrigin(0, 0)
+         .setStrokeStyle(1, 0x526078)
+         .setDepth(-10);
+
+        fondo.setInteractive({ useHandCursor: true });
+
+        fondo.on('pointerdown', () => {
+            this.accionJugador(i);
+        });
+
+        this.fondosAtaque.push(fondo);
+    }
+
+    // Panel separado para la defensa.
+    this.fondoProteccion = this.add.rectangle(
+        480, 244, 160, 88, 0x142b2b
+    ).setOrigin(0, 0)
+     .setStrokeStyle(1, 0x77ad9f)
+     .setDepth(-10);
+
+    this.add.text(492, 252, 'IMPROVISACIÓN\nPROTECTORA', {
+        fontSize: '10px',
+        color: '#b6d9d0'
+    });
+
+    this.add.text(492, 316, 'Consume el turno', {
+        fontSize: '9px',
+        color: '#aeb9c9'
+    });
+    }
+
+    ordenarInterfazCombate() {
+    this.textoJugador.setPosition(16, 12)
+        .setStyle({ fontSize: '12px' });
+
+    this.textoEnemigo.setPosition(440, 12)
+        .setStyle({ fontSize: '12px' });
+
+    this.fondoBarraJugador.setPosition(16, 34);
+    this.barraJugador.setPosition(16, 34);
+    this.fondoBarraEnemigo.setPosition(440, 34);
+    this.barraEnemigo.setPosition(440, 34);
+
+    this.textoTurno.setPosition(328, 28)
+        .setOrigin(0.5, 0)
+        .setStyle({ fontSize: '11px', color: '#e0ad58' });
+
+    this.textoIntencion.setPosition(230, 67)
+        .setStyle({
+            fontSize: '11px',
+            wordWrap: { width: 196 },
+            align: 'center'
+        });
+
+    this.textoAccionJugador.setPosition(16, 184)
+        .setStyle({ fontSize: '11px' });
+
+    this.textoAccionEnemigo.setPosition(16, 202)
+        .setStyle({ fontSize: '11px' });
+
+    this.textoMarca.setPosition(16, 224)
+        .setStyle({ fontSize: '11px' });
+
+    this.textoVeneno.setPosition(380, 224)
+        .setStyle({ fontSize: '11px' });
+
+    for (let i = 0; i < this.botonesAtaque.length; i++) {
+        this.botonesAtaque[i].setPosition(28 + i * 152, 254)
+            .setStyle({
+                fontSize: '12px',
+                wordWrap: { width: 120 }
+            });
+    }
+
+    this.textoProteccion.setPosition(492, 280)
+        .setStyle({
+            fontSize: '11px',
+            wordWrap: { width: 136 }
+        });
+
+    this.textoCalidadPrueba.setPosition(16, 354)
+        .setStyle({ fontSize: '10px' });
+
+    this.textoDefensaPrueba.setPosition(320, 354)
+        .setStyle({ fontSize: '10px' });
+
+    this.botonReinicio.setPosition(584, 354)
+        .setStyle({ fontSize: '10px' })
+        .setText('Reiniciar');
+
+    this.botonMenu.setPosition(16, 352)
+        .setStyle({ fontSize: '11px' })
+        .setText('Volver al menú');
+}
 }
