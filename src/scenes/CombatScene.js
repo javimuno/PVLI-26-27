@@ -15,11 +15,10 @@ export default class CombatScene extends Phaser.Scene{
 
 init(datos={}){
     this.combate = new Combat(datos.auraMaximaJugador,datos.auraMaximaEnemigo);
-    //prueba de sobrepensar
-    //this.combate.marcaEnemigo = 'fuego';
-    //this.combate.aplicarSobrepensar();
+    
     // prr defecto, el resultado del jugador se sigue sorteando
     this.calidadPrueba = 'aleatorio';
+    this.defensaPrueba = 'aleatorio;'
 }
 
 create(){
@@ -36,11 +35,28 @@ create(){
 
     this.textoCalidadPrueba.setInteractive({ useHandCursor: true });
 
+    //calidad de la prueba (tambien incluyendo la proteccion)
     this.textoCalidadPrueba.on(
+    'pointerdown',
+    this.cambiarCalidadPrueba,
+    this
+    );
+
+    // Nuevo selector de resultado defensivo.
+    this.textoDefensaPrueba = this.add.text(
+        390, 46,
+        'Defensa simulada: ' + this.defensaPrueba + ' (clic)',
+        { fontSize: '12px', color: '#ffd166' }
+    );
+
+    this.textoDefensaPrueba.setInteractive({ useHandCursor: true });
+
+    this.textoDefensaPrueba.on(
         'pointerdown',
-        this.cambiarCalidadPrueba,
+        this.cambiarDefensaPrueba,
         this
     );
+
      //textos de simulacion
     this.textoJugador = this.add.text(10,80,'Aura del jugador: '+this.combate.auraJugador);
     this.textoEnemigo = this.add.text(410,80,'Aura del enemigo: '+this.combate.auraEnemigo);
@@ -261,7 +277,7 @@ actualizarPantalla() {
     this.textoProteccion.setColor('#75d5ff');
     }
     else if (this.combate.puedeUsarProteccion()) {
-        this.textoProteccion.setText('Usar protección (prueba: acierto)');
+        this.textoProteccion.setText('Usar protección');
         this.textoProteccion.setColor('#80ed99');
     }
     else if (this.combate.proteccionCargada) {
@@ -410,20 +426,55 @@ cambiarCalidadPrueba() {
 }
 
 accionProteccion() {
-    // Acierto fijo para comprobar primero el bloqueo.
-    let aceptado = this.combate.usarProteccion(true);
+    if (this.combate.puedeUsarProteccion() === false) {
+        return;
+    }
+
+    let acierto = false;
+
+    if (this.defensaPrueba === 'aleatorio') {
+        acierto = Math.random() < 0.5;
+    }
+    else if (this.defensaPrueba === 'acierto') {
+        acierto = true;
+    }
+
+    let aceptado = this.combate.usarProteccion(acierto);
 
     if (!aceptado) {
         return;
     }
 
-    this.textoAccionJugador.setText(
-        'Defensa simulada: acierto. Bloqueo preparado.'
-    );
+    if (acierto) {
+        this.textoAccionJugador.setText(
+            'Defensa simulada: acierto. Bloqueo preparado.'
+        );
+    }
+    else {
+        this.textoAccionJugador.setText(
+            'Defensa simulada: fallo. Carga consumida.'
+        );
+    }
 
     this.textoAccionEnemigo.setText('');
     this.actualizarPantalla();
 
     this.time.delayedCall(800, this.accionEnemigo, [], this);
 }
+
+cambiarDefensaPrueba() {
+    if (this.defensaPrueba === 'aleatorio') {
+        this.defensaPrueba = 'acierto';
+    }
+    else if (this.defensaPrueba === 'acierto') {
+        this.defensaPrueba = 'fallo';
+    }
+    else {
+        this.defensaPrueba = 'aleatorio';
+    }
+
+    this.textoDefensaPrueba.setText(
+        'Defensa simulada: ' + this.defensaPrueba + ' (clic)'
+    );
+    }
 }
