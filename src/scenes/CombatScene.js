@@ -29,7 +29,7 @@ create(){
 
     this.textoCalidadPrueba = this.add.text(
     24, 46,
-    'QTE simulado: ' + this.calidadPrueba + ' (clic para cambiar)',
+    'QTE simulado: ' + this.calidadPrueba + ' (clic)',
     { fontSize: '13px', color: '#ffd166' }
     );
 
@@ -42,7 +42,7 @@ create(){
     this
     );
 
-    // Nuevo selector de resultado defensivo.
+    //selector de defensa
     this.textoDefensaPrueba = this.add.text(
         390, 46,
         'Defensa simulada: ' + this.defensaPrueba + ' (clic)',
@@ -162,6 +162,14 @@ create(){
     this.fondoBarraEnemigo.setOrigin(0,0);
     this.barraEnemigo = this.add.rectangle(410,100,200,8,0x55cc88); //rojo oscuro
     this.barraEnemigo.setOrigin(0, 0);
+
+    //arial
+    for (let objeto of this.children.list) {
+    if (objeto.type === 'Text') {
+        objeto.setFontFamily('Arial');
+        //objeto.setFontStyle('bold');
+    }
+}
 
     this.ordenarInterfazCombate();
     this.actualizarPantalla();
@@ -472,7 +480,7 @@ cambiarCalidadPrueba() {
     }
 
     this.textoCalidadPrueba.setText(
-        'QTE simulado: ' + this.calidadPrueba + ' (clic para cambiar)'
+        'QTE simulado: ' + this.calidadPrueba + ' (clic)'
     );
 }
 
@@ -633,13 +641,13 @@ crearPanelesCombate() {
         });
 
     this.textoCalidadPrueba.setPosition(16, 354)
-        .setStyle({ fontSize: '10px' });
+        .setStyle({ fontSize: '12px' });
 
     this.textoDefensaPrueba.setPosition(320, 354)
-        .setStyle({ fontSize: '10px' });
+        .setStyle({ fontSize: '12px' });
 
     this.botonReinicio.setPosition(584, 354)
-        .setStyle({ fontSize: '10px' })
+        .setStyle({ fontSize: '12px' })
         .setText('Reiniciar');
 
     this.botonMenu.setPosition(16, 352)
