@@ -1,0 +1,53 @@
+//configura e inicia Phaser
+
+import MainMenu from './scenes/mainmenu.js';
+import Scene1 from './scenes/scene1.js';
+import MiniMap from './scenes/miniMap.js';
+import CombatScene from './scenes/CombatScene.js';
+import BarQTE from './scenes/barqte.js';
+import DiscordantQte from './scenes/discordantQTE.js';
+import CopyQTE from './scenes/copyqte.js';
+
+
+let config = {
+    type: Phaser.AUTO,
+    parent: 'juego-phaser',
+    width: 656,
+    height: 376,
+    pixelArt: true,
+    antialias:true,
+    scale: {
+        autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+        mode: Phaser.Scale.FIT,
+        min: {
+            width: 328,
+            height: 188
+        },
+        max: {
+            width: 1312,
+            height: 752
+        },
+        zoom: 1
+    },
+
+    //nombre de nuestra primera escena
+    scene: [MainMenu, BarQTE, MiniMap, DiscordantQte, CombatScene, CopyQTE], 
+    //fisicas del ejemplo
+    physics: {  
+        default: 'arcade', //Tenemos físicas simple, arcade
+        arcade: { 
+            gravity: { y: 0 }, //Tenemos gravedad, podemos modificarla para aumentar su fuera o disminuirla
+            debug: true // Aquí indicamos si queremos que Phaser pinte los cuerpos y fuerzas de los objetos con físicas
+        },
+        checkCollision: {
+            up: true,
+            down: true,
+            left: true,
+            right: true
+        }
+    },
+    title: "ejercicio opcional",
+    version: "1.0.0"
+};
+
+new Phaser.Game(config);
