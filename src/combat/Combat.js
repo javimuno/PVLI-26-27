@@ -16,6 +16,9 @@ export default class Combat {
         this.venenoPendiente = false;
         this.danioVenenoTurno = 0;
         this.contadorEnemigo = 0;
+        this.rachaPerfectos=0;
+        this.proteccionCargada=false;
+        this.proteccionActiva=false;
 
         //variantes por familia, con la dificultad y el daño base
         this.ataquesJugador = [
@@ -111,8 +114,19 @@ export default class Combat {
         let danio = calcularDanioQTE(danioBase,resultadoQTE);
 
         if (danio === null) {
-        return;
-}
+            return;
+        }       
+
+        //bloqueo de daño 
+        let danioBloqueado = 0;
+
+        if (this.proteccionActiva && danio > 0) {
+            danioBloqueado = danio;
+            danio = 0;
+            this.proteccionActiva = false;
+        }
+
+        //gestion de daños
         let auraAnterior = this.auraJugador;
         this.auraJugador = this.auraJugador - danio;
 
@@ -130,7 +144,8 @@ export default class Combat {
             danioBase: danioBase,
             danioMaximo: calcularDanioQTE(danioBase, 'perfecto'),
             danioFinal: danio,
-            danioAplicado: auraAnterior - this.auraJugador
+            danioAplicado: auraAnterior - this.auraJugador,
+            danioBloqueado: danioBloqueado
         };
 
         // completa info
@@ -176,7 +191,9 @@ export default class Combat {
         if (!aceptado) {
             return false;
         }
-
+        
+        //proteccion
+        this.actualizarCargaProteccion(resultadoQTE);
         this.indiceAtaqueUsado = indice;
 
         // variante de la familia
@@ -338,7 +355,7 @@ export default class Combat {
         }
 
         if (this.intencionEnemigo.tipo === 'sobrepensar') {
-            
+
             this.ultimaAccion = {
                 actor: 'enemigo',
                 tipo: 'sobrepensar',
@@ -423,4 +440,64 @@ export default class Combat {
         ataque.sobrepensado = false;
     }
     }
+
+    //consulta si puede usarse la proteccion 
+    actualizarCargaProteccion(resultadoQTE) {
+    if (resultadoQTE === 'perfecto') {
+        this.rachaPerfectos = this.rachaPerfectos + 1;
+
+        if (this.rachaPerfectos >= 2) {
+            this.rachaPerfectos = 2;
+            this.proteccionCargada = true;
+        }
+    }
+    else {
+        this.rachaPerfectos = 0;
+    }
+    }
+
+    puedeUsarProteccion() {
+    if (this.resultado !== null || this.turno !== 'jugador') {
+        return false;
+    }
+
+    if (this.proteccionCargada !== true || this.proteccionActiva) {
+        return false;
+    }
+
+    if (this.intencionEnemigo === null) {
+        return false;
+    }
+
+    return this.intencionEnemigo.tipo === 'ataque' &&
+        this.intencionEnemigo.danioMaximo > 0;
+    }
+
+    usarProteccion(acierto) {
+    if (this.puedeUsarProteccion() === false) {
+        return false;
+    }
+
+    if (acierto !== true && acierto !== false) {
+        return false;
+    }
+
+    this.proteccionCargada = false;
+    this.rachaPerfectos = 0;
+    this.proteccionActiva = acierto;
+    this.marcaEnemigo = null;
+    this.indiceAtaqueUsado = null;
+
+    this.ultimaAccion = {
+        actor: 'jugador',
+        tipo: 'proteccion',
+        acierto: acierto,
+        danioFinal: 0,
+        danioAplicado: 0        
+    };
+
+    this.turno = 'enemigo';
+
+    return true;
+}
 }

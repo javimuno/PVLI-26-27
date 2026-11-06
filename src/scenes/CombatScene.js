@@ -64,12 +64,27 @@ create(){
     color: '#ffd166'
     });
     
+    //proteccion
+    this.textoProteccion = this.add.text(240, 280, '', {
+    fontSize: '12px',
+    color: '#aaaaaa'
+    });
+
+    //boton de protección
+
+    this.textoProteccion.setInteractive({ useHandCursor: true });
+    this.textoProteccion.on(
+        'pointerdown',
+        this.accionProteccion,
+        this
+    );
+
+
     //botones
 
     //-ataque jugador-
-    this.textoAccionJugador = this.add.text(24, 140, '', { fontSize: '12px' }
-);
-    this.textoAccionEnemigo = this.add.text(24, 165, '');
+    this.textoAccionJugador = this.add.text(24, 140, '', { fontSize: '12px' });
+    this.textoAccionEnemigo = this.add.text(24, 165, '', { fontSize: '12px' });
 
     this.botonesAtaque = [];
 
@@ -218,10 +233,17 @@ accionEnemigo() {
     }
 }
     else {
+        let textoBloqueo = '';
+
+        if (accion.danioBloqueado > 0) {
+            textoBloqueo = ' | Bloqueado: ' + accion.danioBloqueado;
+        }
+
         this.textoAccionEnemigo.setText(
             'Enemigo: ' + accion.familia + ' / ' +
             accion.dificultad + ' / ' + accion.calidad +
-            ' (daño: ' + accion.danioFinal + '/' + accion.danioMaximo + ')'
+            ' (daño: ' + accion.danioFinal + '/' + accion.danioMaximo + ')' +
+            textoBloqueo
         );
     }
 
@@ -231,6 +253,28 @@ accionEnemigo() {
 //refleja toda la información del combate en pantalla, es el feedback visual de momento
 //de info de combate y de botones
 actualizarPantalla() {
+
+
+    //proteccion
+    if (this.combate.proteccionActiva) {
+    this.textoProteccion.setText('Protección: bloqueo activo');
+    this.textoProteccion.setColor('#75d5ff');
+    }
+    else if (this.combate.puedeUsarProteccion()) {
+        this.textoProteccion.setText('Usar protección (prueba: acierto)');
+        this.textoProteccion.setColor('#80ed99');
+    }
+    else if (this.combate.proteccionCargada) {
+        this.textoProteccion.setText('Protección cargada (no disponible)');
+        this.textoProteccion.setColor('#aaaaaa');
+    }
+    else {
+        this.textoProteccion.setText(
+            'Protección: ' + this.combate.rachaPerfectos + '/2 Perfectos'
+        );
+
+        this.textoProteccion.setColor('#aaaaaa');
+    }
 
     //intencion enemiga
     if (this.combate.resultado !== null) {
@@ -363,5 +407,23 @@ cambiarCalidadPrueba() {
     this.textoCalidadPrueba.setText(
         'QTE simulado: ' + this.calidadPrueba + ' (clic para cambiar)'
     );
+}
+
+accionProteccion() {
+    // Acierto fijo para comprobar primero el bloqueo.
+    let aceptado = this.combate.usarProteccion(true);
+
+    if (!aceptado) {
+        return;
+    }
+
+    this.textoAccionJugador.setText(
+        'Defensa simulada: acierto. Bloqueo preparado.'
+    );
+
+    this.textoAccionEnemigo.setText('');
+    this.actualizarPantalla();
+
+    this.time.delayedCall(800, this.accionEnemigo, [], this);
 }
 }
