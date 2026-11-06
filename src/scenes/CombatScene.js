@@ -103,28 +103,41 @@ create(){
     this.textoAccionEnemigo = this.add.text(24, 165, '', { fontSize: '12px' });
 
     this.botonesAtaque = [];
+    this.textosDificultad = [];
+    this.textosElemento = [];
 
     //aquí se crean los botones y cada boton tiene un indice para luego seleccionar
     //la variante dentro de la familia de ataque que sea
     for (let i = 0; i < this.combate.ataquesJugador.length; i++) {
-    let ataque = this.combate.ataquesJugador[i];
 
-    let boton = this.add.text(
+        let ataque = this.combate.ataquesJugador[i];
+
+        let boton = this.add.text(
         24 + i * 208,
         200,
-        ataque.familia + '\n' +
-        ataque.dificultad + '\n' +
-        'Daño base: ' + ataque.danioBase + '\n' +
-        'Elemento: ' + ataque.elemento
-    );
+        ataque.familia + '\n\n' +
+        'Daño base: ' + ataque.danioBase
+        );
 
-    boton.setInteractive({ useHandCursor: true });
+        boton.setInteractive({ useHandCursor: true });
 
-    boton.on('pointerdown', () => {
-        this.accionJugador(i);
-    });
+        boton.on('pointerdown', () => {
+            this.accionJugador(i);
+        });
 
-    this.botonesAtaque.push(boton);
+        this.botonesAtaque.push(boton);
+
+        this.textosDificultad.push(
+        this.add.text(28 + i * 152, 270, '', {
+            fontSize: '12px'
+        })
+         );
+
+        this.textosElemento.push(
+        this.add.text(28 + i * 152, 302, '', {
+            fontSize: '12px'
+        })
+         );
     }
 
     //-reinicio-
@@ -151,8 +164,6 @@ create(){
     this.barraEnemigo.setOrigin(0, 0);
 
     this.ordenarInterfazCombate();
-    this.actualizarPantalla();
-
     this.actualizarPantalla();
 
 }
@@ -314,6 +325,19 @@ actualizarPantalla() {
         );
     }
 
+    // colores para los estados
+    let coloresEstado = {
+        fuego: '#ffad60',
+        hielo: '#b3e5fc',
+        veneno: '#c29afa'
+    };
+
+    this.textoMarca.setColor(
+        coloresEstado[this.combate.marcaEnemigo] || '#aaaaaa'
+    );
+
+    this.textoVeneno.setColor(coloresEstado.veneno);
+
     //marca de estado
     if (this.combate.marcaEnemigo === null) {
     this.textoMarca.setText('Marca enemiga: ninguna');
@@ -342,28 +366,44 @@ actualizarPantalla() {
     }
 
 
+    
+    // Colores para reconocer la dificultad y el elemento de cada carta.
+    let coloresDificultad = {
+        facil: '#80ed99',
+        media: '#ffd166',
+        dificil: '#ff7777'
+    };
+
+    let coloresElemento = {
+        fuego: '#ffad60',
+        hielo: '#b3e5fc',
+        veneno: '#c29afa'
+    };
+
     //bucle generador de cartas
     for (let i = 0; i < this.botonesAtaque.length; i++) {
         let ataque = this.combate.ataquesJugador[i];
 
-        //sobrepensar
-        let textoDificultad = ataque.dificultad;
-
-        if (ataque.sobrepensado) {
-            textoDificultad = ataque.dificultadBase + ' -> ' + ataque.dificultad;
-            this.botonesAtaque[i].setColor('#904fbb');
-        }
-        else {
-            this.botonesAtaque[i].setColor('#ffffff');
-        }
-
-        //boton
         this.botonesAtaque[i].setText(
-            ataque.familia + '\n' +
-            textoDificultad + '\n' +
-            'Daño base: ' + ataque.danioBase + '\n' +
-            'Elemento: ' + ataque.elemento
+            ataque.familia + '\n\n' +
+            'Daño base: ' + ataque.danioBase
         );
+        this.botonesAtaque[i].setColor('#ffffff');
+
+        let dificultad = ataque.dificultad;
+        let color = coloresDificultad[ataque.dificultad];
+
+        // El rosa distingue la dificultad aumentada por Sobrepensar.
+        if (ataque.sobrepensado) {
+            dificultad = ataque.dificultadBase + ' -> ' + ataque.dificultad;
+            color = '#ff8fbc';
+        }
+
+        this.textosDificultad[i].setText(dificultad);
+        this.textosDificultad[i].setColor(color);
+
+        this.textosElemento[i].setText('Elemento: ' + ataque.elemento);
+        this.textosElemento[i].setColor(coloresElemento[ataque.elemento]);
     }
 
     this.barraJugador.scaleX = this.combate.auraJugador/this.combate.auraMaximaJugador;
