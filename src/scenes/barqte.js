@@ -21,7 +21,7 @@ export default class BarQTE extends Phaser.Scene{
         
         this.espacio = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        this.timeleft = this.time.delayedCall(6000, () => {
+        this.timeleft = this.time.delayedCall(5000, () => {
             console.log("Fallo");
             this.scene.start('mainMenu');
         })
@@ -50,9 +50,7 @@ export default class BarQTE extends Phaser.Scene{
         this.bar.setVelocity(-this.speed, 0);
         this.bar.body.setSize(5,5);
 
-        this.timeOnScreen = 5;
-
-        this.textoTiempo = this.add.text(20, 20, 'Tiempo: 0', {
+        this.timeOnScreen = this.add.text(20, 20, 'Tiempo: 0', {
             fontSize: '30px', color: '#000000'
         })
 
@@ -60,8 +58,8 @@ export default class BarQTE extends Phaser.Scene{
 
     //actualizacion repetida mientras la escena esta activa
     update(time, delta){
-        this.timeOnScreen -= delta / 1000;
-        this.textoTiempo.setText('Tiempo: ' + Math.floor(this.timeOnScreen));
+
+        this.timeOnScreen.setText('Tiempo: ' + Math.ceil(this.timeleft.getRemainingSeconds()));
 
         if (Phaser.Input.Keyboard.JustDown(this.espacio)) {
         //Para la barra

@@ -19,6 +19,8 @@ export default class MainMenu extends Phaser.Scene{
         this.load.image('lightBlue','assets/light-blue.png');
         this.load.image('yellow','assets/yellow.png');
         this.load.image('minimapchar', 'assets/MinimapCharacter.png');
+        this.load.image('arrow', 'assets/flecha.png');
+        this.load.image('green', 'assets/green.png');
 
     }
     //creacion de objetos en la escena

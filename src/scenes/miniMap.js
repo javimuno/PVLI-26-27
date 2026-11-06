@@ -25,6 +25,12 @@ export default class MiniMap extends Phaser.Scene{
         this.physics.add.collider(this.playerCube, this.levelPad1, (PlayerMap, LevelPad) =>{
             this.levelPad1.NextLevel('barQTE') //LLama al método del tipo consumible
         });
+
+        this.levelPad2 = new LevelPad(this, 344, 300, 'levelPadColor');
+
+        this.physics.add.collider(this.playerCube, this.levelPad2, (PlayerMap, LevelPad) =>{
+            this.levelPad2.NextLevel('copyQTE') //LLama al método del tipo consumible
+        });
     }
 
     //actualizacion repetida mientras la escena esta activa
