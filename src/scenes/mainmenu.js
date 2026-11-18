@@ -21,6 +21,7 @@ export default class MainMenu extends Phaser.Scene{
         this.load.image('minimapchar', 'assets/MinimapCharacter.png');
         this.load.image('arrow', 'assets/flecha.png');
         this.load.image('green', 'assets/green.png');
+        this.load.image('dCards', 'assets/discordCard.png');
 
     }
     //creacion de objetos en la escena
@@ -33,7 +34,7 @@ export default class MainMenu extends Phaser.Scene{
         this.button.setDisplaySize(250, 78);
 
         this.button.on('pointerdown', pointer =>{
-            this.scene.start('copyQTE');
+            this.scene.start('minimap');
         })
 
     }

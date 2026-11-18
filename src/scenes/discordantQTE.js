@@ -23,19 +23,19 @@ export default class DiscordantQte extends Phaser.Scene{
         
         this.option = [];
 
-        this.option[0] = new QTECards(this, 164, 188, 'darkBlue');
+        this.option[0] = new QTECards(this, 164, 188, 'dCards');
         this.option[0].on('pointerdown', pointer =>{
             if(correcto == 0) this.acierto = 1;
             else this.acierto = 2;
         })
 
-        this.option[1] = new QTECards(this, 328, 188, 'yellow');
+        this.option[1] = new QTECards(this, 328, 188, 'dCards');
         this.option[1].on('pointerdown', pointer =>{
             if(correcto == 1) this.acierto = 1;
             else this.acierto = 2;
         })
 
-        this.option[2] = new QTECards(this, 492, 188, 'lightBlue');
+        this.option[2] = new QTECards(this, 492, 188, 'dCards');
         this.option[2].on('pointerdown', pointer =>{
             if(correcto == 2) this.acierto = 1;
             else this.acierto = 2;
@@ -71,7 +71,7 @@ export default class DiscordantQte extends Phaser.Scene{
             }
         }else {
             this.timeleft = this.time.delayedCall(1000, () => {
-            this.scene.start('copyQTE');
+            this.scene.start('minimap');
             })
         } 
         
