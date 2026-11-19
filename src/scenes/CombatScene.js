@@ -187,6 +187,17 @@ accionJugador(indice) {
     }
 
     let ataque = this.combate.ataquesJugador[indice];
+    
+    //DIFERENCIA DE CARTAS
+    if (ataque.familia === 'Aura') {
+
+        this.scene.launch('auraCarcassonealQTE', {
+            dificultad: ataque.dificultad
+        });
+
+        this.scene.pause();
+        return;
+    }
 
     //de momento simula el QTE del jugador hasta que los tengamos que así podía probarlo
     let calidad = this.calidadPrueba;
