@@ -43,6 +43,18 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
                 this.terminarQTE(calidad);
             });
         });
+
+        //Preparacion del puzzle
+        this.prepararPuzzle();
+        this.crearTablero();
+
+        console.log('Dificultad:', this.dificultad);
+        console.log('Piezas retiradas:', this.huecos);
+
+        //Checker del mezclado de piezas
+        console.log('Huecos:', this.huecos);
+        console.table(this.piezasOfrecidas);
+        console.log('Soluciones:', this.soluciones);
     }
 
     
@@ -56,5 +68,110 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
 
         this.scene.stop();
         this.finalizar(calidad);
+    }
+
+    
+    prepararPuzzle() {
+
+        let cantidades = {
+            facil: 3,
+            media: 4,
+            dificil: 6
+        };
+
+        let cantidad = cantidades[this.dificultad];
+
+        // Las 12 piezas del mosaico original
+        let disponibles = [1, 2, 3, 4, 5, 6,
+                        7, 8, 9, 10, 11, 12];
+
+        this.huecos = [];
+
+        for (let i = 0; i < cantidad; i++) {
+
+            let indice = Phaser.Math.Between(0, disponibles.length - 1);
+
+            let pieza = disponibles[indice];
+
+            disponibles.splice(indice, 1);
+
+            this.huecos.push(pieza);
+        }
+
+        // Copiamos las piezas retiradas para mezclarlas sin alterar los huecos
+        let pendientes = this.huecos.slice();
+
+        let letras = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+        this.piezasOfrecidas = [];
+        this.soluciones = {};
+
+        for (let i = 0; i < this.huecos.length; i++) {
+
+            // Elegimos una pieza al azar entre las que quedan
+            let indice = Phaser.Math.Between(0, pendientes.length - 1);
+            let pieza = pendientes[indice];
+
+            pendientes.splice(indice, 1);
+
+            // Le asignamos una letra según su posición entre las ofrecidas
+            let letra = letras[i];
+
+            this.piezasOfrecidas.push({
+                pieza: pieza,
+                letra: letra
+            });
+
+            // El número del hueco depende de su posición en this.huecos
+            let numero = this.huecos.indexOf(pieza) + 1;
+
+            this.soluciones[numero] = letra;
+        }
+    }
+
+    crearTablero() {
+
+        // Vértices por pares que forman hexágono
+        let puntos = [
+            33,  0,
+            66, 19,
+            66, 57,
+            33, 76,
+            0, 57,
+            0, 19
+        ];
+
+        // Tres filas con cuatro piezas cada una
+        for (let fila = 0; fila < 3; fila++) {
+            for (let columna = 0; columna < 4; columna++) {
+
+                let pieza = fila * 4 + columna + 1;
+
+                let x = 65 + columna * 66 + (fila % 2) * 33;
+                let y = 122 + fila * 57;
+
+                let esHueco = this.huecos.includes(pieza);
+
+                let color = esHueco ? 0x182033 : 0x38516b;
+
+                this.add.polygon(x, y, puntos, color)
+                    .setOrigin(0.5)
+                    .setStrokeStyle(2, 0xffd166);
+
+                let texto;
+
+                if (esHueco) {
+                    texto = String(this.huecos.indexOf(pieza) + 1);
+                }
+                else {
+                    texto = 'P' + pieza;
+                }
+
+                this.add.text(x, y, texto, {
+                    fontSize: '14px',
+                    color: '#ffffff'
+                }).setOrigin(0.5).setDepth(1);
+            }
+        }
     }
 }
