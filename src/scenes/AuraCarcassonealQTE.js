@@ -6,6 +6,8 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
 
     init(datos = {}) {
         this.dificultad = datos.dificultad || 'facil';
+        this.finalizar = datos.finalizar;
+        this.terminado = false;
     }
 
     create() {
@@ -21,16 +23,38 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
             color: '#ffd166'
         }).setOrigin(0.5);
 
-        let volver = this.add.text(328, 260, 'VOLVER AL COMBATE', {
-            fontSize: '18px',
-            color: '#80ed99'
-        }).setOrigin(0.5);
+        let calidades = ['perfecto', 'bien', 'fallo'];
 
-        volver.setInteractive({ useHandCursor: true });
+        calidades.forEach((calidad, indice) => {
 
-        volver.on('pointerdown', () => {
-            this.scene.resume('combat');
-            this.scene.stop();
+            let boton = this.add.text(
+                120 + indice * 200,
+                260,
+                calidad.toUpperCase(),
+                {
+                    fontSize: '18px',
+                    color: '#80ed99'
+                }
+            ).setOrigin(0.5);
+
+            boton.setInteractive({ useHandCursor: true });
+
+            boton.on('pointerdown', () => {
+                this.terminarQTE(calidad);
+            });
         });
+    }
+
+    
+    terminarQTE(calidad) {
+
+        if (this.terminado) {
+            return;
+        }
+        //evita resultado duplicado
+        this.terminado = true;
+
+        this.scene.stop();
+        this.finalizar(calidad);
     }
 }

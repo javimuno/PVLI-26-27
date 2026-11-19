@@ -165,11 +165,11 @@ create(){
 
     //arial
     for (let objeto of this.children.list) {
-    if (objeto.type === 'Text') {
-        objeto.setFontFamily('Arial');
-        //objeto.setFontStyle('bold');
+        if (objeto.type === 'Text') {
+            objeto.setFontFamily('Arial');
+            //objeto.setFontStyle('bold');
+        }
     }
-}
 
     this.ordenarInterfazCombate();
     this.actualizarPantalla();
@@ -187,16 +187,23 @@ accionJugador(indice) {
     }
 
     let ataque = this.combate.ataquesJugador[indice];
-    
+
     //DIFERENCIA DE CARTAS
     if (ataque.familia === 'Aura') {
 
-        this.scene.launch('auraCarcassonealQTE', {
-            dificultad: ataque.dificultad
-        });
+    this.scene.launch('auraCarcassonealQTE', 
+        {
+            dificultad: ataque.dificultad,
 
-        this.scene.pause();
-        return;
+            finalizar: (calidad) => {
+                this.scene.resume();
+                this.resolverAtaqueJugador(indice, calidad);
+            }
+        }
+    );
+
+    this.scene.pause();
+    return;
     }
 
     //de momento simula el QTE del jugador hasta que los tengamos que así podía probarlo
@@ -207,48 +214,7 @@ accionJugador(indice) {
         calidad = sorteoCalidad(ataque);
     }
 
-    let aceptado = this.combate.usarAtaqueJugador(
-        indice,
-        calidad
-    );
-
-    if (!aceptado) {
-        return;
-    }
-
-    let accion = this.combate.ultimaAccion;
-    let textoCombo = '';
-
-    if (accion.combo === 'fuego') { 
-        textoCombo = ' | Fuego: +50%';
-    }
-    else if (accion.combo === 'hielo') { 
-    textoCombo = ' | Hielo: congela';
-    }
-    else if (accion.combo === 'veneno' && accion.danioVeneno > 0) {
-    textoCombo = ' | Veneno: -' + accion.danioVeneno + ' ahora';
-    }
-
-    this.textoAccionJugador.setText(
-        'Jugador: ' + accion.familia + ' / ' +
-        accion.dificultad + ' / ' + accion.calidad +
-        ' (daño: ' + accion.danioFinal + '/' + accion.danioMaximo + ')' +
-        textoCombo
-    );
-
-    this.textoAccionEnemigo.setText('');
-
-    this.actualizarPantalla();
-
-    //aquí solo hay respuesta si la pelea continua y el turno es del enemigo
-    if (
-        this.combate.resultado === null &&
-        this.combate.turno === 'enemigo'
-    ) {
-        this.time.delayedCall(
-            800, this.accionEnemigo, [], this
-        );
-    }
+   this.resolverAtaqueJugador(indice,calidad);
 }
 
 accionEnemigo() {
@@ -279,7 +245,7 @@ accionEnemigo() {
                 objetivo.dificultadAnterior + ' -> ' +
                 objetivo.dificultadNueva
             );
-    }
+        }
 }
     else {
         let textoBloqueo = '';
@@ -602,7 +568,7 @@ crearPanelesCombate() {
     });
     }
 
-    ordenarInterfazCombate() {
+ordenarInterfazCombate() {
     this.textoJugador.setPosition(16, 12)
         .setStyle({ fontSize: '12px' });
 
@@ -664,5 +630,51 @@ crearPanelesCombate() {
     this.botonMenu.setPosition(16, 352)
         .setStyle({ fontSize: '11px' })
         .setText('Volver al menú');
+}
+
+
+resolverAtaqueJugador(indice,calidad){
+     let aceptado = this.combate.usarAtaqueJugador(
+        indice,
+        calidad
+    );
+
+    if (!aceptado) {
+        return;
+    }
+
+    let accion = this.combate.ultimaAccion;
+    let textoCombo = '';
+
+    if (accion.combo === 'fuego') { 
+        textoCombo = ' | Fuego: +50%';
+    }
+    else if (accion.combo === 'hielo') { 
+    textoCombo = ' | Hielo: congela';
+    }
+    else if (accion.combo === 'veneno' && accion.danioVeneno > 0) {
+    textoCombo = ' | Veneno: -' + accion.danioVeneno + ' ahora';
+    }
+
+    this.textoAccionJugador.setText(
+        'Jugador: ' + accion.familia + ' / ' +
+        accion.dificultad + ' / ' + accion.calidad +
+        ' (daño: ' + accion.danioFinal + '/' + accion.danioMaximo + ')' +
+        textoCombo
+    );
+
+    this.textoAccionEnemigo.setText('');
+
+    this.actualizarPantalla();
+
+    //aquí solo hay respuesta si la pelea continua y el turno es del enemigo
+    if (
+        this.combate.resultado === null &&
+        this.combate.turno === 'enemigo'
+    ) {
+        this.time.delayedCall(
+            800, this.accionEnemigo, [], this
+        );
+    }
 }
 }
