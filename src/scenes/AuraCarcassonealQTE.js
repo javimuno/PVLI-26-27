@@ -13,12 +13,12 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
     create() {
         this.cameras.main.setBackgroundColor('#182033');
 
-        this.add.text(328, 100, 'AURA CARCASSONEAL', {
+        this.add.text(328, 22, 'AURA CARCASSONEAL', {
             fontSize: '24px',
             color: '#ffffff'
         }).setOrigin(0.5);
 
-        this.add.text(328, 170, 'Dificultad: ' + this.dificultad, {
+        this.add.text(328, 55, 'Dificultad: ' + this.dificultad, {
             fontSize: '20px',
             color: '#ffd166'
         }).setOrigin(0.5);
@@ -29,7 +29,7 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
 
             let boton = this.add.text(
                 120 + indice * 200,
-                260,
+                346,
                 calidad.toUpperCase(),
                 {
                     fontSize: '18px',
@@ -44,9 +44,20 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
             });
         });
 
+        // Vértices de los hexágonos paraambos paneles
+        this.puntosHexagono = [
+            33,  0,
+            66, 19,
+            66, 57,
+            33, 76,
+            0, 57,
+            0, 19
+        ];
+
         //Preparacion del puzzle
         this.prepararPuzzle();
         this.crearTablero();
+        this.crearPiezasOfrecidas();
 
         console.log('Dificultad:', this.dificultad);
         console.log('Piezas retiradas:', this.huecos);
@@ -131,15 +142,7 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
 
     crearTablero() {
 
-        // Vértices por pares que forman hexágono
-        let puntos = [
-            33,  0,
-            66, 19,
-            66, 57,
-            33, 76,
-            0, 57,
-            0, 19
-        ];
+        
 
         // Tres filas con cuatro piezas cada una
         for (let fila = 0; fila < 3; fila++) {
@@ -154,9 +157,9 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
 
                 let color = esHueco ? 0x182033 : 0x38516b;
 
-                this.add.polygon(x, y, puntos, color)
-                    .setOrigin(0.5)
-                    .setStrokeStyle(2, 0xffd166);
+                this.add.polygon(x, y, this.puntosHexagono, color)
+                .setOrigin(0.5)
+                .setStrokeStyle(2, 0xffd166);
 
                 let texto;
 
@@ -172,6 +175,37 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
                     color: '#ffffff'
                 }).setOrigin(0.5).setDepth(1);
             }
+        }
+    }
+
+    crearPiezasOfrecidas() {
+
+        for (let i = 0; i < this.piezasOfrecidas.length; i++) {
+
+            let pieza = this.piezasOfrecidas[i];
+
+            // Dos columnas y hasta tres filas
+            let columna = i % 2;
+            let fila = Math.floor(i / 2);
+
+            let x = 452 + columna * 115;
+            let y = 119 + fila * 77;
+
+            this.add.polygon(x, y, this.puntosHexagono, 0x38516b)
+                .setOrigin(0.5)
+                .setStrokeStyle(2, 0xffd166);
+
+            // Letra que recibe la pieza en este QTE
+            this.add.text(x, y - 12, pieza.letra, {
+                fontSize: '20px',
+                color: '#ffffff'
+            }).setOrigin(0.5).setDepth(1);
+
+            // Identificador provisional para comprobarlo
+            this.add.text(x, y + 14, 'P' + pieza.pieza, {
+                fontSize: '12px',
+                color: '#ffd166'
+            }).setOrigin(0.5).setDepth(1);
         }
     }
 }
