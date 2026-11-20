@@ -14,7 +14,7 @@ export default class DiscordantQte extends Phaser.Scene{
             this.scene.start('mainMenu');
         })
 
-        const texto = this.cache.text.get('datos');
+        const texto = this.cache.text.get('discordOpt');
         const lineas = texto.trim().split(/\r?\n/);
         this.guay = lineas[0].trim().split(/\s+/);
         this.noguay = lineas[1].trim().split(/\s+/);

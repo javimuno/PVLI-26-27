@@ -23,8 +23,8 @@ export default class MainMenu extends Phaser.Scene{
         this.load.image('green', 'assets/green.png');
         this.load.image('dCards', 'assets/discordCard.png');
         this.load.image('barTime', 'assets/timeBar.png');
-        
-        this.load.text('datos', 'assets/datos.txt');
+
+        this.load.text('discordOpt', 'assets/opcionesDiscord.txt');
 
     }
     //creacion de objetos en la escena
