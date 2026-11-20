@@ -23,13 +23,13 @@ export default class MiniMap extends Phaser.Scene{
         this.levelPad1 = new LevelPad(this, 172, 300, 'levelPadColor');
 
         this.physics.add.collider(this.playerCube, this.levelPad1, (PlayerMap, LevelPad) =>{
-            this.levelPad1.NextLevel('barQTE') //LLama al método del tipo consumible
+            this.levelPad1.NextLevel('discord') //LLama al método del tipo consumible
         });
 
         this.levelPad2 = new LevelPad(this, 344, 300, 'levelPadColor');
 
         this.physics.add.collider(this.playerCube, this.levelPad2, (PlayerMap, LevelPad) =>{
-            this.levelPad2.NextLevel('combat') //LLama al método del tipo consumible
+            this.levelPad2.NextLevel('discord') //LLama al método del tipo consumible
         });
     }
 
