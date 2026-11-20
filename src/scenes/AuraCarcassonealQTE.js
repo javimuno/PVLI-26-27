@@ -155,7 +155,9 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
 
     crearTablero() {
 
-        
+        // Guardamos los objetos gráficos de los huecos para modificarlos después
+        this.fichasHuecos = {};
+        this.textosHuecos = {};
 
         // Tres filas con cuatro piezas cada una
         for (let fila = 0; fila < 3; fila++) {
@@ -170,7 +172,8 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
 
                 let color = esHueco ? 0x182033 : 0x38516b;
 
-                this.add.polygon(x, y, this.puntosHexagono, color)
+                //Fichas propiamente
+                let ficha = this.add.polygon(x, y, this.puntosHexagono, color)
                 .setOrigin(0.5)
                 .setStrokeStyle(2, 0xffd166);
 
@@ -182,11 +185,20 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
                 else {
                     texto = 'P' + pieza;
                 }
-
-                this.add.text(x, y, texto, {
+               
+                let etiqueta = this.add.text(x, y, texto, {
                     fontSize: '14px',
                     color: '#ffffff'
                 }).setOrigin(0.5).setDepth(1);
+
+
+                if (esHueco) {
+
+                    let numero = this.huecos.indexOf(pieza) + 1;
+
+                    this.fichasHuecos[numero] = ficha;
+                    this.textosHuecos[numero] = etiqueta;
+                }
             }
         }
     }
@@ -271,7 +283,36 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
         }
 
         this.respuestas[numero] = letra;
+        
+        //Actualizamos 
+        this.actualizarTablero();
 
         console.log('Respuestas:', this.respuestas);
+    }
+
+    actualizarTablero() {
+
+        for (let numero = 1; numero <= this.huecos.length; numero++) {
+
+            let letra = this.respuestas[numero];
+
+            // Si el hueco no tiene pieza, recuperamos su aspecto original
+            if (letra === undefined) {
+
+                this.fichasHuecos[numero].setFillStyle(0x182033);
+                this.textosHuecos[numero].setText(String(numero));
+            }
+            else {
+
+                // Buscamos la pieza asociada a la letra introducida
+                let pieza = this.piezasOfrecidas.find(p => p.letra === letra);
+
+                this.fichasHuecos[numero].setFillStyle(0x38516b);
+
+                this.textosHuecos[numero].setText(
+                    numero + letra + '\nP' + pieza.pieza
+                );
+            }
+        }
     }
 }
