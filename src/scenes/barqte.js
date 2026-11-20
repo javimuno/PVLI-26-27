@@ -4,16 +4,11 @@ export default class BarQTE extends Phaser.Scene{
         super ({key: 'barQTE'});
     }
     //inicializacion de escenas
-    init (/*data*/){
-        //this.dificultad = data.nombre;
+    init (data){
+        this.dificultad = data.nombre;
     }
-    //carga de imagenes, sonidos y recursos
-    preload(){
-        
 
-    }
     //creacion de objetos en la escena
-    
     create() {
         
         this.espacio = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -27,7 +22,8 @@ export default class BarQTE extends Phaser.Scene{
         })
 
         //Construye el QTE
-        this.buildBar();
+        
+        this.buildBar(this.selectDificultad(this.dificultad));
 
         //Consrtuye la barra de tiempo
         this.inicializarBarraTiempo();
@@ -39,8 +35,6 @@ export default class BarQTE extends Phaser.Scene{
 
         if(this.result != true)
         {
-  
-
             //Barra tiempo
             this.insideBar.width -= delta / 10;
             this.color = Phaser.Display.Color.Interpolate.ColorWithColor(this.red, this.green, 1, this.insideBar.width / 600);
@@ -76,9 +70,9 @@ export default class BarQTE extends Phaser.Scene{
         }
     }
 
-    buildBar()
+    buildBar(xAzul)
     {
-        let position = Phaser.Math.Between(128, 528);
+        let position = Phaser.Math.Between(xAzul + 28, 628 - xAzul);
         console.log(position);
 
         this.fondo2 = this.add.image(328, 188, 'playerCube');
@@ -90,11 +84,11 @@ export default class BarQTE extends Phaser.Scene{
         
         this.mid = this.physics.add.image(position, 150, 'lightBlue');
         this.mid.body.setAllowGravity(false);
-        this.mid.setDisplaySize(100, 30);
+        this.mid.setDisplaySize(xAzul, 30);
 
         this.good = this.physics.add.image(position, 150, 'yellow');
         this.good.body.setAllowGravity(false);
-        this.good.setDisplaySize(50, 30);
+        this.good.setDisplaySize(xAzul/2, 30);
 
         this.bar = this.physics.add.image(328, 150, 'bar');
         this.bar.body.setAllowGravity(false);
@@ -137,18 +131,9 @@ export default class BarQTE extends Phaser.Scene{
         this.add.image(328, 59, 'barTime');
     }
 
-    facil()
+    selectDificultad(dificultad)
     {
-
-    }
-
-    medio()
-    {
-
-    }
-
-    dificil()
-    {
-
+        this.xAzul = 400;
+        return this.xAzul;
     }
 }
