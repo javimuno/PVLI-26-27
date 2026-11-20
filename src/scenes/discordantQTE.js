@@ -61,11 +61,7 @@ export default class DiscordantQte extends Phaser.Scene{
         }
 
         this.timeOnScreen = 6;
-
-        this.textoTiempo = this.add.text(20, 20, 'Tiempo: 6', {
-            fontSize: '30px', color: '#000000'
-        })
-
+        
         this.textoCorrecto = this.add.text(328, 300, '¿Cuál no pertenece?', {
             fontSize: '30px', color: '#000000'
         }).setOrigin(0.5, 0)
@@ -81,7 +77,6 @@ export default class DiscordantQte extends Phaser.Scene{
             this.insideBar.width -= dt / 10;
             this.color = Phaser.Display.Color.Interpolate.ColorWithColor(this.red, this.green, 1, this.insideBar.width / 600);
             this.insideBar.setFillStyle(Phaser.Display.Color.GetColor(this.color.r, this.color.g, this.color.b));
-            this.textoTiempo.setText('Tiempo: ' + Math.floor(this.timeOnScreen));
             }else {
             this.textoCorrecto.setText('Fallaste');
             this.fin = true;
