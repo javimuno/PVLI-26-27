@@ -7,6 +7,7 @@ import CombatScene from './scenes/CombatScene.js';
 import BarQTE from './scenes/barqte.js';
 import DiscordantQte from './scenes/discordantQTE.js';
 import CopyQTE from './scenes/copyqte.js';
+import AuraCarcassonealQTE from './scenes/AuraCarcassonealQTE.js';
 
 
 let config = {
@@ -31,7 +32,7 @@ let config = {
     },
 
     //nombre de nuestra primera escena
-    scene: [MainMenu, BarQTE, MiniMap, DiscordantQte, CombatScene, CopyQTE], 
+    scene: [MainMenu, BarQTE, MiniMap, DiscordantQte, CombatScene, CopyQTE,AuraCarcassonealQTE], 
     //fisicas del ejemplo
     physics: {  
         default: 'arcade', //Tenemos físicas simple, arcade
