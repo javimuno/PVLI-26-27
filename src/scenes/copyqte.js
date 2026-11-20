@@ -17,19 +17,19 @@ export default class CopyQTE extends Phaser.Scene{
     
     create() {
         this.cursor = this.input.keyboard.createCursorKeys();
-
-        let position = Phaser.Math.Between(1, 4);
+        this.terminado = false;
 
         this.timeleft = this.time.delayedCall(5000, () => {
             console.log("Fallo");
-            this.scene.start('combat');
+            this.scene.start('copyQTE');
         })
-
-        this.terminado = false;
 
         this.fondo2 = this.add.image(328, 188, 'playerCube');
         this.fondo2.setDisplaySize(656, 376);
+        
+        
 
+        /*
         //primera flecha
         this.green1 = this.physics.add.image(131, 188, 'green');
         this.green1.body.setAllowGravity(false);
@@ -69,12 +69,9 @@ export default class CopyQTE extends Phaser.Scene{
         this.arrow4 = this.physics.add.image(524, 188, 'arrow');
         this.arrow4.body.setAllowGravity(false);
         this.arrow4.setDisplaySize(60, 30);
+        */
 
-        //Dirreccion de las flechas
-        this.direccion1 = this.aleatorio(this.arrow1);
-        this.direccion2 = this.aleatorio(this.arrow2);
-        this.direccion3 = this.aleatorio(this.arrow3);
-        this.direccion4 = this.aleatorio(this.arrow4);
+        
 
         //Juntarlos en arrays
         this.direccion = [
@@ -90,6 +87,22 @@ export default class CopyQTE extends Phaser.Scene{
         this.green3,
         this.green4
         ];
+
+        this.arrow = [
+        this.arrow1,
+        this.arrow2,
+        this.arrow3,
+        this.arrow4
+        ];
+
+
+        this.consrtuirFlechas();
+
+        //Dirreccion de las flechas
+        this.direccion1 = this.aleatorio(this.arrow[1]);
+        this.direccion2 = this.aleatorio(this.arrow[2]);
+        this.direccion3 = this.aleatorio(this.arrow[3]);
+        this.direccion4 = this.aleatorio(this.arrow[4]);
 
         this.step = 0;
 
@@ -111,7 +124,7 @@ export default class CopyQTE extends Phaser.Scene{
 
         if (Phaser.Input.Keyboard.JustDown(this.cursor.down)) {
 
-            if (this.direccion[this.step] == 1) {
+            if (this.direccion[this.step] == 0) {
                 this.green[this.step].setVisible(true);
                 this.step++;
             }
@@ -123,7 +136,7 @@ export default class CopyQTE extends Phaser.Scene{
 
         else if (Phaser.Input.Keyboard.JustDown(this.cursor.right)) {
 
-            if (this.direccion[this.step] == 2) {
+            if (this.direccion[this.step] == 1) {
                 this.green[this.step].setVisible(true);
                 this.step++;
             }
@@ -135,7 +148,7 @@ export default class CopyQTE extends Phaser.Scene{
 
         else if (Phaser.Input.Keyboard.JustDown(this.cursor.up)) {
 
-            if (this.direccion[this.step] == 3) {
+            if (this.direccion[this.step] == 2) {
                 this.green[this.step].setVisible(true);
                 this.step++;
             }
@@ -147,7 +160,7 @@ export default class CopyQTE extends Phaser.Scene{
 
         else if (Phaser.Input.Keyboard.JustDown(this.cursor.left)) {
 
-            if (this.direccion[this.step] == 4) {
+            if (this.direccion[this.step] == 3) {
                 this.green[this.step].setVisible(true);
                 this.step++;
             }
@@ -160,7 +173,7 @@ export default class CopyQTE extends Phaser.Scene{
             this.terminado = true;
             this.timeleft.remove();
             this.time.delayedCall(1500, () => {
-            this.scene.start('combat');
+            this.scene.start('copyQTE');
         });
     }
 
@@ -169,10 +182,10 @@ export default class CopyQTE extends Phaser.Scene{
 
     reiniciar() 
     {
-        this.green1.setVisible(false);
-        this.green2.setVisible(false);
-        this.green3.setVisible(false);
-        this.green4.setVisible(false);
+        this.green[1].setVisible(false);
+        this.green[2].setVisible(false);
+        this.green[3].setVisible(false);
+        this.green[4].setVisible(false);
 
         this.step = 0;
     }
@@ -195,5 +208,22 @@ export default class CopyQTE extends Phaser.Scene{
         }  
 
         return num;
+    }
+
+    consrtuirFlechas()
+    {
+        this.x = 131;
+        for(let i = 1; i < 5; i++)
+        {
+            this.green[i] = this.physics.add.image(this.x * i, 188, 'green');
+            this.green[i].body.setAllowGravity(false);
+            this.green[i].setDisplaySize(90, 90);
+            this.green[i].setVisible(false);
+
+            this.arrow[i] = this.physics.add.image(this.x * i, 188, 'arrow');
+            this.arrow[i].body.setAllowGravity(false);
+            this.arrow[i].setDisplaySize(60, 30);
+        }
+
     }
 }
