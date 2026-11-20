@@ -8,6 +8,11 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
         this.dificultad = datos.dificultad || 'facil';
         this.finalizar = datos.finalizar;
         this.terminado = false;
+
+        //Respuestas introducidas por el jugador
+        this.respuestas = {};
+        //Hueco seleccionado actualmente
+        this.huecoSeleccionado = null;
     }
 
     create() {
@@ -66,6 +71,14 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
         console.log('Huecos:', this.huecos);
         console.table(this.piezasOfrecidas);
         console.log('Soluciones:', this.soluciones);
+
+        // Detectamos las pulsaciones del teclado durante el QTE
+        this.input.keyboard.on('keydown', this.procesarTecla, this);
+
+        // Eliminamos el evento cuando se cierra la escena
+        this.events.once('shutdown', () => {
+            this.input.keyboard.off('keydown', this.procesarTecla, this);
+});
     }
 
     
@@ -207,5 +220,58 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
                 color: '#ffd166'
             }).setOrigin(0.5).setDepth(1);
         }
+    }
+
+    procesarTecla(evento) {
+
+        if (this.terminado || evento.repeat) {
+            return;
+        }
+
+        let tecla = evento.key.toUpperCase();
+
+        let numero = Number(tecla);
+
+        // Seleccionamos un hueco válido
+        if (Number.isInteger(numero) &&
+            numero >= 1 &&
+            numero <= this.huecos.length) {
+
+            this.huecoSeleccionado = numero;
+
+            console.log('Hueco seleccionado:', numero);
+            return;
+        }
+
+        // No podemos colocar una pieza sin seleccionar un hueco
+        if (this.huecoSeleccionado === null) {
+            return;
+        }
+
+        // Comprobamos si la letra pertenece a una pieza ofrecida
+        for (let i = 0; i < this.piezasOfrecidas.length; i++) {
+
+            if (tecla === this.piezasOfrecidas[i].letra) {
+
+                this.colocarPieza(this.huecoSeleccionado, tecla);
+                this.huecoSeleccionado = null;
+                return;
+            }
+        }
+    }
+
+    colocarPieza(numero, letra) {
+
+        // Si la pieza ya estaba colocada, liberamos su hueco anterior
+        for (let i = 1; i <= this.huecos.length; i++) {
+
+            if (this.respuestas[i] === letra) {
+                delete this.respuestas[i];
+            }
+        }
+
+        this.respuestas[numero] = letra;
+
+        console.log('Respuestas:', this.respuestas);
     }
 }
