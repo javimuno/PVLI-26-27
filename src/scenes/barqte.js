@@ -7,8 +7,10 @@ export default class BarQTE extends Phaser.Scene{
         this.danio = 100; 
     }
     //inicializacion de escenas
-    init (){
+    init (data){
         this.result = false;
+        this.danio = data.danio;
+        this.nombre = data.nombre;
     }
     //carga de imagenes, sonidos y recursos
     preload(){
@@ -93,7 +95,7 @@ export default class BarQTE extends Phaser.Scene{
         if(this.result){
             this.time.delayedCall(1500, () => {
                 console.log("1,5 segundos despues del ataque");
-                this.scene.start('discord');
+                this.scene.start('discord'){danioFinal: this.danio};
             })
 
             this.timeleft.remove();

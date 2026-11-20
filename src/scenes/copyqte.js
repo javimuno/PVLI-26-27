@@ -5,8 +5,9 @@ export default class CopyQTE extends Phaser.Scene{
 
     }
     //inicializacion de escenas
-    init (){
-
+    init (data){
+        this.danio = data.danio;
+        this.nombre = data.nombre;
     }
     //carga de imagenes, sonidos y recursos
     preload(){
@@ -160,7 +161,7 @@ export default class CopyQTE extends Phaser.Scene{
             this.terminado = true;
             this.timeleft.remove();
             this.time.delayedCall(1500, () => {
-            this.scene.start('combat');
+            this.scene.start('combat'){danioFinal: this.danio};
         });
     }
 
