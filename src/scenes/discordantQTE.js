@@ -26,12 +26,12 @@ export default class DiscordantQte extends Phaser.Scene{
         this.red = Phaser.Display.Color.ValueToColor(0xff0000);
 
         this.fondo2 = this.add.image(328, 188, 'playerCube');
-        this.insideBar = this.add.rectangle(325, 60, 600, 32, 0x95ff00);
+        this.insideBar = this.add.rectangle(325, 60, 600, 32, '#95ff00');
         this.add.image(328, 59, 'barTime');
         
         this.option = [];
 
-        this.option[0] = new QTECards(this, 164, 188, 'dCards');
+        this.option[0] = new QTECards(this, 164, 200, 'dCards');
         this.option[0].on('pointerdown', pointer =>{
             if(!this.fin){
                 if(correcto == 0) this.acierto = 1;
@@ -39,7 +39,7 @@ export default class DiscordantQte extends Phaser.Scene{
             }
         })
 
-        this.option[1] = new QTECards(this, 328, 188, 'dCards');
+        this.option[1] = new QTECards(this, 328, 200, 'dCards');
         this.option[1].on('pointerdown', pointer =>{
             if(!this.fin){
                 if(correcto == 1) this.acierto = 1;
@@ -47,7 +47,7 @@ export default class DiscordantQte extends Phaser.Scene{
             }
         })
 
-        this.option[2] = new QTECards(this, 492, 188, 'dCards');
+        this.option[2] = new QTECards(this, 492, 200, 'dCards');
         this.option[2].on('pointerdown', pointer =>{
             if(!this.fin){
                 if(correcto == 2) this.acierto = 1;
@@ -63,7 +63,7 @@ export default class DiscordantQte extends Phaser.Scene{
         this.timeOnScreen = 6;
         
         this.textoCorrecto = this.add.text(328, 300, '¿Cuál no pertenece?', {
-            fontSize: '30px', color: '#000000'
+            fontSize: '30px', color: '#ffffff', fontStyle: 'bold'
         }).setOrigin(0.5, 0)
     }   
 

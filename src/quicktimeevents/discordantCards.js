@@ -7,8 +7,8 @@ export default class QTECards extends Phaser.GameObjects.Sprite{
         this.setInteractive();
         this.setDisplaySize(125, 150);
 
-        this.texto = this.scene.add.text(x, 170, 'Coso', {
-            fontSize: '30px', color: '#000000'
+        this.texto = this.scene.add.text(x, 182, 'Coso', {
+            fontSize: '40px', color: '#000000', fontStyle: 'bold'
         }).setOrigin(0.5, 0)
     }
     preUpdate(t, dt){
