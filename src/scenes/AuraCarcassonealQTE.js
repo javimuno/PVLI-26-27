@@ -241,6 +241,12 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
         }
 
         let tecla = evento.key.toUpperCase();
+        
+        // Confirmamos las respuestas introducidas
+        if (tecla === 'ENTER') {
+            this.comprobarResultado();
+            return;
+        }
 
         let numero = Number(tecla);
 
@@ -314,5 +320,35 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
                 );
             }
         }
+    }
+
+
+    comprobarResultado() {
+
+        let aciertos = 0;
+
+        // Comparamos las respuestas del jugador con las soluciones
+        for (let i = 1; i <= this.huecos.length; i++) {
+
+            if (this.respuestas[i] === this.soluciones[i]) {
+                aciertos++;
+            }
+        }
+
+        let porcentaje = aciertos / this.huecos.length;
+
+        let calidad = 'fallo';
+
+        if (porcentaje === 1) {
+            calidad = 'perfecto';
+        }
+        else if (porcentaje >= 0.5) {
+            calidad = 'bien';
+        }
+
+        console.log('Aciertos:', aciertos);
+        console.log('Resultado:', calidad);
+
+        this.terminarQTE(calidad);
     }
 }
