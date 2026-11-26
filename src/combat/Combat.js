@@ -1,6 +1,7 @@
 import calcularDanioQTE from "./damage.js";
 import generarVariante, { generarVarianteJugador } from "./variants.js";
 import sorteoCalidad from "./quality.js";
+import actualizarFavorPublico from './favorPublico.js';
 export default class Combat {
 
     constructor(auraMaximaJugador=100,auraMaximaEnemigo=100,turnoInicial='jugador'){
@@ -19,6 +20,7 @@ export default class Combat {
         this.rachaPerfectos=0;
         this.proteccionCargada=false;
         this.proteccionActiva=false;
+        this.favorPublico = 0; //favor empieza neutral
 
         //variantes por familia, con la dificultad y el daño base
         this.ataquesJugador = [
@@ -65,8 +67,18 @@ export default class Combat {
         // El bonus sólo se consigue si la ejecución es Perfecta.
         if (resultadoQTE === 'perfecto') {
             danio = Math.round(danio * 1.5);
-    }
-}
+        }
+        }
+        /**FAVOR DEL PUBLICO */
+        // bonus de daño si el público favorece al jugador
+        if (this.favorPublico === 2) {
+
+            if (danio > 0) {
+                danio = danio + 1;
+            }
+
+            danioMaximo = danioMaximo + 1;
+        }
 
         let auraAnterior = this.auraEnemigo;
         this.auraEnemigo = this.auraEnemigo - danio;
@@ -84,6 +96,15 @@ export default class Combat {
             danioFinal: danio,
             danioAplicado: auraAnterior - this.auraEnemigo
         };
+
+        // actualizamos el favor según el resultado del ataque
+        this.favorPublico = actualizarFavorPublico(
+            this.favorPublico,
+            'jugador',
+            resultadoQTE
+        );
+
+console.log('Favor del público:', this.favorPublico);
 
         if(this.auraEnemigo===0){
             this.resultado='victoria';
@@ -117,6 +138,19 @@ export default class Combat {
             return;
         }       
 
+        /**FAVOR DEL PUBLICO -> ENEMIGO */
+        let danioMaximo = calcularDanioQTE(danioBase, 'perfecto');
+
+        // bonus de daño si el público favorece al enemigo
+        if (this.favorPublico === -2) {
+
+            if (danio > 0) {
+                danio = danio + 1;
+            }
+
+            danioMaximo = danioMaximo + 1;
+        }
+
         //bloqueo de daño 
         let danioBloqueado = 0;
 
@@ -142,7 +176,7 @@ export default class Combat {
             dificultad: null,
             calidad: resultadoQTE,
             danioBase: danioBase,
-            danioMaximo: calcularDanioQTE(danioBase, 'perfecto'),
+            danioMaximo: danioMaximo,
             danioFinal: danio,
             danioAplicado: auraAnterior - this.auraJugador,
             danioBloqueado: danioBloqueado
@@ -153,6 +187,15 @@ export default class Combat {
             this.ultimaAccion.familia = ataque.familia;
             this.ultimaAccion.dificultad = ataque.dificultad;
         }
+
+        // actualizamos el favor según el ataque enemigo
+        this.favorPublico = actualizarFavorPublico(
+            this.favorPublico,
+            'enemigo',
+            resultadoQTE
+        );
+
+        console.log('Favor del público:', this.favorPublico);
 
         if (this.auraJugador === 0) {
         this.resultado = 'derrota';

@@ -172,6 +172,7 @@ create(){
     }
 
     this.ordenarInterfazCombate();
+    this.crearMedidorFavor();
     this.actualizarPantalla();
 
 }
@@ -269,6 +270,29 @@ accionEnemigo() {
 //de info de combate y de botones
 actualizarPantalla() {
 
+    /**Favor del publico */
+    // destacamos la posición actual del favor
+    for (let marca of this.marcasFavor) {
+
+        if (marca.valor === this.combate.favorPublico) {
+
+            let color = 0xffd166;
+
+            if (marca.valor > 0) {
+                color = 0x80ed99;
+            }
+            else if (marca.valor < 0) {
+                color = 0xff7777;
+            }
+
+            marca.fondo.setFillStyle(color);
+            marca.texto.setColor('#182033');
+        }
+        else {
+            marca.fondo.setFillStyle(0x26374e);
+            marca.texto.setColor('#b6c2d4');
+        }
+    }
 
     //proteccion
     if (this.combate.proteccionActiva) {
@@ -303,10 +327,17 @@ actualizarPantalla() {
     else {
         let intencion = this.combate.intencionEnemigo;
 
+        let danioMaximo = intencion.danioMaximo;
+
+        // añadimos el bonus si el público favorece al enemigo
+        if (this.combate.favorPublico === -2) {
+            danioMaximo++;
+        }
+
         this.textoIntencion.setText(
             'Intención: ' + intencion.ataque.familia + ' / ' +
             intencion.ataque.dificultad + ' / hasta ' +
-            intencion.danioMaximo + ' de daño'
+            danioMaximo + ' de daño'
         );
     }
 
@@ -675,6 +706,41 @@ resolverAtaqueJugador(indice,calidad){
         this.time.delayedCall(
             800, this.accionEnemigo, [], this
         );
+    }
+}
+
+crearMedidorFavor() {
+
+    this.add.text(328, 145, 'FAVOR DEL PÚBLICO', {
+        fontSize: '10px',
+        fontFamily: 'Arial',
+        color: '#ffd166'
+    }).setOrigin(0.5);
+
+    this.marcasFavor = [];
+
+    // creamos las cinco posiciones del medidor
+    for (let valor = -2; valor <= 2; valor++) {
+
+        let x = 328 + valor * 29;
+
+        let fondo = this.add.rectangle(
+            x, 165, 25, 22, 0x26374e
+        ).setStrokeStyle(1, 0x65758b);
+
+        let numero = valor > 0 ? '+' + valor : String(valor);
+
+        let texto = this.add.text(x, 165, numero, {
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            color: '#b6c2d4'
+        }).setOrigin(0.5);
+
+        this.marcasFavor.push({
+            valor: valor,
+            fondo: fondo,
+            texto: texto
+        });
     }
 }
 }
