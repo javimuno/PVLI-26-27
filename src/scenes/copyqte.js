@@ -22,7 +22,7 @@ export default class CopyQTE extends Phaser.Scene{
 
         this.timeleft = this.time.delayedCall(5000, () => {
             console.log("Fallo");
-            this.scene.start('copyQTE');
+            this.scene.start('mainMenu'/*, {calidad: this.calidad}*/);
         })
         
         this.direccion = [];

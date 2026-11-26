@@ -37,7 +37,7 @@ export default class MainMenu extends Phaser.Scene{
         this.button.setDisplaySize(250, 78);
 
         this.button.on('pointerdown', pointer =>{
-            this.scene.start('copyQTE');
+            this.scene.start('minimap');
         })
 
     }

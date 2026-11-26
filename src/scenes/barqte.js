@@ -18,7 +18,7 @@ export default class BarQTE extends Phaser.Scene{
 
         this.timeleft = this.time.delayedCall(5000, () => {
             console.log("Fallo");
-            this.scene.start('mainMenu');
+            this.scene.start('mainMenu' /*,{calidad: this.calidad}*/);
         })
 
         //Construye el QTE
