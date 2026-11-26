@@ -61,10 +61,10 @@ export default class BarQTE extends Phaser.Scene{
                 this.color = Phaser.Display.Color.Interpolate.ColorWithColor(this.red, this.green, 1, this.insideBar.width / 600);
                 this.insideBar.setFillStyle(Phaser.Display.Color.GetColor(this.color.r, this.color.g, this.color.b));
 
-                this.scene.start('mainMenu');
+                this.scene.start('mainMenu' /*,{calidad: this.calidad}*/);
                 //this.scene.stop();
                 //this.finalizar(this.calidad);
-            })
+            });
 
             this.timeleft.remove();
         }
@@ -134,6 +134,18 @@ export default class BarQTE extends Phaser.Scene{
     selectDificultad(dificultad)
     {
         this.xAzul = 400;
+        if(dificultad === 'Facil')
+        {
+            this.xAzul = 200;
+        } 
+        else if(dificultad === 'Medio')
+        {
+            this.xAzul = 100;
+        }
+        else if(dificultad === 'Dificil')
+        {
+            this.xAzul = 50;
+        }
         return this.xAzul;
     }
 }

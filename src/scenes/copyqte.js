@@ -4,105 +4,33 @@ export default class CopyQTE extends Phaser.Scene{
         super ({key: 'copyQTE'});
 
     }
-    //inicializacion de escenas
-    init (){
-        
-    }
-    //carga de imagenes, sonidos y recursos
-    preload(){
-        
 
+    //inicializacion de escenas
+    init (data)
+    {
+        this.dificultad = data.nombre;  
     }
-    //creacion de objetos en la escena
-    
+
+    //creacion de objetos en la escena    
     create() {
         this.cursor = this.input.keyboard.createCursorKeys();
         this.terminado = false;
+        this.calidad = 'mal';
+
+        this.fondo2 = this.add.image(328, 188, 'playerCube');
+        this.fondo2.setDisplaySize(656, 376);
 
         this.timeleft = this.time.delayedCall(5000, () => {
             console.log("Fallo");
             this.scene.start('copyQTE');
         })
-
-        this.fondo2 = this.add.image(328, 188, 'playerCube');
-        this.fondo2.setDisplaySize(656, 376);
         
-        
+        this.direccion = [];
+        this.green = [];
+        this.arrow = [];
 
-        /*
-        //primera flecha
-        this.green1 = this.physics.add.image(131, 188, 'green');
-        this.green1.body.setAllowGravity(false);
-        this.green1.setDisplaySize(90, 90);
-        this.green1.setVisible(false);
-
-        this.arrow1 = this.physics.add.image(131, 188, 'arrow');
-        this.arrow1.body.setAllowGravity(false);
-        this.arrow1.setDisplaySize(60, 30);
-
-        //segunda flecha
-        this.green2 = this.physics.add.image(262, 188, 'green');
-        this.green2.body.setAllowGravity(false);
-        this.green2.setDisplaySize(90, 90);
-        this.green2.setVisible(false);
-
-        this.arrow2 = this.physics.add.image(262, 188, 'arrow');
-        this.arrow2.body.setAllowGravity(false);
-        this.arrow2.setDisplaySize(60, 30);
-        
-        //tercera flecha
-        this.green3 = this.physics.add.image(393, 188, 'green');
-        this.green3.body.setAllowGravity(false);
-        this.green3.setDisplaySize(90, 90);
-        this.green3.setVisible(false);
-
-        this.arrow3 = this.physics.add.image(393, 188, 'arrow');
-        this.arrow3.body.setAllowGravity(false);
-        this.arrow3.setDisplaySize(60, 30);
-
-        //cuarta flecha
-        this.green4 = this.physics.add.image(524, 188, 'green');
-        this.green4.body.setAllowGravity(false);
-        this.green4.setDisplaySize(90, 90);
-        this.green4.setVisible(false);
-
-        this.arrow4 = this.physics.add.image(524, 188, 'arrow');
-        this.arrow4.body.setAllowGravity(false);
-        this.arrow4.setDisplaySize(60, 30);
-        */
-
-        
-
-        //Juntarlos en arrays
-        this.direccion = [
-        this.direccion1,
-        this.direccion2,
-        this.direccion3,
-        this.direccion4
-        ];
-
-        this.green = [
-        this.green1,
-        this.green2,
-        this.green3,
-        this.green4
-        ];
-
-        this.arrow = [
-        this.arrow1,
-        this.arrow2,
-        this.arrow3,
-        this.arrow4
-        ];
-
-
-        this.consrtuirFlechas();
-
-        //Dirreccion de las flechas
-        this.direccion1 = this.aleatorio(this.arrow[1]);
-        this.direccion2 = this.aleatorio(this.arrow[2]);
-        this.direccion3 = this.aleatorio(this.arrow[3]);
-        this.direccion4 = this.aleatorio(this.arrow[4]);
+        this.nFlechas = this.selectDificultad(this.dificultad);
+        this.consrtuirFlechas(this.nFlechas);
 
         this.step = 0;
 
@@ -169,11 +97,14 @@ export default class CopyQTE extends Phaser.Scene{
             }
 
         }
-        if (this.step === 4 && !this.terminado) {
+        if (this.step === this.nFlechas && !this.terminado) {
             this.terminado = true;
+            this.calidad = 'Perfecto';
             this.timeleft.remove();
             this.time.delayedCall(1500, () => {
-            this.scene.start('copyQTE');
+            this.scene.start('mainMenu'/*, {calidad: this.calidad}*/);
+            //this.scene.stop();
+            //this.finalizar(this.calidad);
         });
     }
 
@@ -182,48 +113,65 @@ export default class CopyQTE extends Phaser.Scene{
 
     reiniciar() 
     {
-        this.green[1].setVisible(false);
-        this.green[2].setVisible(false);
-        this.green[3].setVisible(false);
-        this.green[4].setVisible(false);
+        for(let i = 0; i < this.nFlechas; i++) {this.green[i].setVisible(false);}
 
         this.step = 0;
     }
 
     aleatorio(flecha)
     {
-        let num = Phaser.Math.Between(1, 4);
+        let num = Phaser.Math.Between(0, 3);
 
-        if (num == 1) {
+        if (num == 0) {
             flecha.setRotation(Math.PI / 2); // Abajo
         }
-        else if (num == 2) {
+        else if (num == 1) {
             flecha.setRotation(0); // Derecha
         }
-        else if (num == 3) {
+        else if (num == 2) {
             flecha.setRotation(Math.PI * 1.5); // Arriba
         }
-        else if (num == 4) {
+        else if (num == 3) {
             flecha.setRotation(Math.PI); // Izquierda
         }  
 
         return num;
     }
 
-    consrtuirFlechas()
+    consrtuirFlechas(nFlechas)
     {
-        this.x = 131;
-        for(let i = 1; i < 5; i++)
+        this.x = 656 / (this.nFlechas + 1);
+        for(let i = 0; i < this.nFlechas; i++)
         {
-            this.green[i] = this.physics.add.image(this.x * i, 188, 'green');
+            this.green[i] = this.physics.add.image(this.x * (i + 1), 188, 'green');
             this.green[i].body.setAllowGravity(false);
             this.green[i].setDisplaySize(90, 90);
             this.green[i].setVisible(false);
 
-            this.arrow[i] = this.physics.add.image(this.x * i, 188, 'arrow');
+            this.arrow[i] = this.physics.add.image(this.x * (i + 1), 188, 'arrow');
             this.arrow[i].body.setAllowGravity(false);
             this.arrow[i].setDisplaySize(60, 30);
+
+            this.direccion[i] = this.aleatorio(this.arrow[i]);
         }
 
+    }
+
+    selectDificultad(dificultad)
+    {
+        this.numFlechas = 4;
+        if(dificultad === 'Facil')
+        {
+            this.numFlechas = 3;
+        } 
+        else if(dificultad === 'Medio')
+        {
+            this.numFlechas = 4;
+        }
+        else if(dificultad === 'Dificil')
+        {
+            this.numFlechas = 5;
+        }
+        return this.numFlechas;
     }
 }
