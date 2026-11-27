@@ -11,8 +11,8 @@ export default class LevelPad extends Phaser.GameObjects.Sprite{
         super.preUpdate(t, dt);
     }
 
-    NextLevel(scenaNombre){
-        this.scene.scene.start(scenaNombre);
+    NextLevel(scenaNombre, progress){
+        this.scene.scene.start(scenaNombre, {progress: progress});
     }
 
 }

@@ -10,24 +10,25 @@ export default class DiscordantQte extends Phaser.Scene{
     }
 
     create() {
+        this.superado = false;
         // Contador inicial
         this.timeleft = this.time.delayedCall(8000, () => {
             console.log("Fallo");
-            this.scene.start('mainMenu');
+            this.scene.start('combat');
+            this.finalizar(this.superado);
         })
 
         //Lectura de opcionesDiscord.txt
         const texto = this.cache.text.get('discordOpt');
         const lineas = texto.trim().split(/\r?\n/);
-        this.guay = lineas[0].trim().split(/\s+/);
-        this.noguay = lineas[1].trim().split(/\s+/);
-
+        let familia = Phaser.Math.Between(0, 3);
+        this.guay = lineas[familia].trim().split(/\s+/);
+        this.noguay = lineas[familia + 4].trim().split(/\s+/);
         //Variables
         this.cardsNum = 4;
         let correcto = Phaser.Math.Between(0, this.cardsNum - 1); //Aleatorio que elige el QTECard correcto
         this.acierto = 0; //¿Ha acertado? Por defecto 0
         this.fin = false; //Estado del QTE
-        this.superado = 0;
         this.green = Phaser.Display.Color.ValueToColor(0x95ff00);
         this.red = Phaser.Display.Color.ValueToColor(0xff0000);
         this.option = []; //Array en el que se crearán los QTECards
@@ -70,8 +71,7 @@ export default class DiscordantQte extends Phaser.Scene{
             if(this.acierto == 1){
             this.textoCorrecto.setText('Acertaste');
             this.fin = true;
-            if(this.superado < 2) this.superado = 1;
-            //this.finalizar('bien');
+            this.superado = true;
             }else if(this.timeOnScreen > 0.1 && this.acierto != 2){
             this.timeOnScreen -= dt / 1000;
             this.insideBar.width -= dt / 10;
@@ -80,11 +80,11 @@ export default class DiscordantQte extends Phaser.Scene{
             }else {
             this.textoCorrecto.setText('Fallaste');
             this.fin = true;
-            //this.finalizar('mal');
             }
         }else { //Finaliza la escena
             this.timeleft = this.time.delayedCall(1000, () => {
-            this.scene.start('minimap', {progress : this.superado});
+            this.scene.stop();
+            this.finalizar(this.superado);
             })
         } 
     }

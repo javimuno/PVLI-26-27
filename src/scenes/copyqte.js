@@ -8,21 +8,23 @@ export default class CopyQTE extends Phaser.Scene{
     //inicializacion de escenas
     init (data)
     {
-        this.dificultad = data.nombre;  
+        this.dificultad = data.dificultad || 'facil';
+        this.finalizar = data.finalizar; 
     }
 
     //creacion de objetos en la escena    
     create() {
         this.cursor = this.input.keyboard.createCursorKeys();
         this.terminado = false;
-        this.calidad = 'mal';
+        this.calidad = 'fallo';
 
         this.fondo2 = this.add.image(328, 188, 'playerCube');
         this.fondo2.setDisplaySize(656, 376);
 
         this.timeleft = this.time.delayedCall(5000, () => {
-            console.log("Fallo");
-            this.scene.start('mainMenu'/*, {calidad: this.calidad}*/);
+            console.log("fallo");
+            this.scene.stop();
+            this.finalizar(this.calidad);
         })
         
         this.direccion = [];
@@ -99,12 +101,12 @@ export default class CopyQTE extends Phaser.Scene{
         }
         if (this.step === this.nFlechas && !this.terminado) {
             this.terminado = true;
-            this.calidad = 'Perfecto';
+            this.calidad = 'perfecto';
             this.timeleft.remove();
             this.time.delayedCall(1500, () => {
-            this.scene.start('mainMenu'/*, {calidad: this.calidad}*/);
-            //this.scene.stop();
-            //this.finalizar(this.calidad);
+            //this.scene.start('mainMenu'/*, {calidad: this.calidad}*/);
+            this.scene.stop();
+            this.finalizar(this.calidad);
         });
     }
 
@@ -160,15 +162,15 @@ export default class CopyQTE extends Phaser.Scene{
     selectDificultad(dificultad)
     {
         this.numFlechas = 4;
-        if(dificultad === 'Facil')
+        if(dificultad === 'facil')
         {
             this.numFlechas = 3;
         } 
-        else if(dificultad === 'Medio')
+        else if(dificultad === 'medio')
         {
             this.numFlechas = 4;
         }
-        else if(dificultad === 'Dificil')
+        else if(dificultad === 'dificil')
         {
             this.numFlechas = 5;
         }

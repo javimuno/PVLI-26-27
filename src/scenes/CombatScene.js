@@ -206,6 +206,21 @@ accionJugador(indice) {
     this.scene.pause();
     return;
     }
+    else if(ataque.familia === 'Pose') {
+        this.scene.launch('copyQTE', 
+        {
+            dificultad: ataque.dificultad,
+
+            finalizar: (calidad) => {
+                this.scene.resume();
+                this.resolverAtaqueJugador(indice, calidad);
+            }
+        }
+    );
+
+    this.scene.pause();
+    return;
+    }
 
     //de momento simula el QTE del jugador hasta que los tengamos que así podía probarlo
     let calidad = this.calidadPrueba;
@@ -497,16 +512,16 @@ accionProteccion() {
         return;
     }
 
-    let acierto = false;
-
-    if (this.defensaPrueba === 'aleatorio') {
-        acierto = Math.random() < 0.5;
-    }
-    else if (this.defensaPrueba === 'acierto') {
-        acierto = true;
-    }
-
-    let aceptado = this.combate.usarProteccion(acierto);
+    this.scene.launch('discord', 
+        {
+            finalizar: (calidad) => {
+                this.scene.resume();
+                let aceptado = this.combate.usarProteccion(calidad);
+            }
+        }
+    );
+    this.scene.pause();
+    return;
 
     if (!aceptado) {
         return;
