@@ -21,7 +21,7 @@ export default class CopyQTE extends Phaser.Scene{
         this.fondo2.setDisplaySize(656, 376);
 
         this.timeleft = this.time.delayedCall(5000, () => {
-            console.log("Fallo");
+            console.log("fallo");
             this.finEvento();
         })
         
@@ -96,7 +96,7 @@ export default class CopyQTE extends Phaser.Scene{
 
         }
         if (this.step === this.nFlechas && !this.terminado) {
-            this.calidad = 'Perfecto';
+            this.calidad = 'perfecto';
             this.finEvento();
         }
 
@@ -132,6 +132,12 @@ export default class CopyQTE extends Phaser.Scene{
 
     consrtuirFlechas(nFlechas)
     {
+        //Instrucciones
+        this.textoCorrecto = this.add.text(328, 88, 'COPIA', {
+            fontSize: '40px', color: '#000000', fontStyle: 'bold'
+        }).setOrigin(0.5, 0)
+
+        //Flechas
         this.x = 656 / (this.nFlechas + 1);
         for(let i = 0; i < this.nFlechas; i++)
         {
@@ -153,7 +159,7 @@ export default class CopyQTE extends Phaser.Scene{
 
     selectDificultad(dificultad)
     {
-        this.numFlechas = 4;
+        this.numFlechas = 6;
         if(dificultad === 'facil')
         {
             this.numFlechas = 3;
@@ -174,8 +180,8 @@ export default class CopyQTE extends Phaser.Scene{
         this.green = Phaser.Display.Color.ValueToColor(0x95ff00);
         this.red = Phaser.Display.Color.ValueToColor(0xff0000);
 
-        this.insideBar = this.add.rectangle(325, 60, 600, 32, 0x95ff00);
-        this.add.image(328, 59, 'barTime');
+        this.insideBar = this.add.rectangle(325, 38, 600, 32, 0x95ff00);
+        this.add.image(328, 37, 'barTime');
     }
 
     finEvento()

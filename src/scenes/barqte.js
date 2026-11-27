@@ -14,7 +14,10 @@ export default class BarQTE extends Phaser.Scene{
         this.espacio = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.speed = 400;
         this.result = false;
-        this.calidad = 'mal';
+        this.calidad = 'fallo';
+
+        this.fondo2 = this.add.image(328, 188, 'playerCube');
+        this.fondo2.setDisplaySize(656, 376);
 
         this.timeleft = this.time.delayedCall(5000, () => {
             console.log("Fallo");
@@ -61,12 +64,23 @@ export default class BarQTE extends Phaser.Scene{
 
     buildBar(xAzul)
     {
+        //Instrucciones
+        this.textoCorrecto = this.add.text(328, 88, 'PARALO', {
+            fontSize: '40px', color: '#000000', fontStyle: 'bold'
+        }).setOrigin(0.5, 0)
+
+        if(xAzul > 300)
+        {
+            xAzul = 300;
+        }
+        else if(xAzul < 1)
+        {
+            xAzul = 50;
+        }
+        //Barra
         let position = Phaser.Math.Between(xAzul + 28, 628 - xAzul);
         console.log(position);
 
-        this.fondo2 = this.add.image(328, 188, 'playerCube');
-        this.fondo2.setDisplaySize(656, 376);
-        
         this.bad = this.physics.add.image(328, 150, 'darkBlue');
         this.bad.body.setAllowGravity(false);
         this.bad.setDisplaySize(600, 30);
@@ -105,7 +119,7 @@ export default class BarQTE extends Phaser.Scene{
 
         //Comprobar colisiones con bad
         else if (this.physics.collide(this.bar, this.bad)) {
-            this.calidad = 'mal';
+            this.calidad = 'fallo';
         }
 
         console.log(this.calidad);
@@ -116,22 +130,22 @@ export default class BarQTE extends Phaser.Scene{
         this.green = Phaser.Display.Color.ValueToColor(0x95ff00);
         this.red = Phaser.Display.Color.ValueToColor(0xff0000);
 
-        this.insideBar = this.add.rectangle(325, 60, 600, 32, 0x95ff00);
-        this.add.image(328, 59, 'barTime');
+        this.insideBar = this.add.rectangle(325, 38, 600, 32, 0x95ff00);
+        this.add.image(328, 37, 'barTime');
     }
 
     selectDificultad(dificultad)
     {
-        this.xAzul = 400;
-        if(dificultad === 'Facil')
+        this.xAzul = -500;
+        if(dificultad === 'facil')
         {
             this.xAzul = 200;
         } 
-        else if(dificultad === 'Medio')
+        else if(dificultad === 'medio')
         {
             this.xAzul = 100;
         }
-        else if(dificultad === 'Dificil')
+        else if(dificultad === 'dificil')
         {
             this.xAzul = 50;
         }
