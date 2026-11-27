@@ -63,23 +63,23 @@ export default class BarQTE extends Phaser.Scene{
         }
     }
 
-    buildBar(xAzul)
+    buildBar()
     {
         //Instrucciones
         this.textoCorrecto = this.add.text(328, 88, 'PARALO', {
             fontSize: '40px', color: '#000000', fontStyle: 'bold'
         }).setOrigin(0.5, 0)
 
-        if(xAzul > 300)
+        if(this.xAzul > 300)
         {
             xAzul = 300;
         }
-        else if(xAzul < 1)
+        else if(this.xAzul < 1)
         {
             xAzul = 50;
         }
         //Barra
-        let position = Phaser.Math.Between(xAzul + 28, 628 - xAzul);
+        let position = Phaser.Math.Between(this.xAzul + 28, 628 - this.xAzul);
         console.log(position);
 
         this.bad = this.physics.add.image(328, 150, 'darkBlue');
@@ -88,11 +88,11 @@ export default class BarQTE extends Phaser.Scene{
         
         this.mid = this.physics.add.image(position, 150, 'lightBlue');
         this.mid.body.setAllowGravity(false);
-        this.mid.setDisplaySize(xAzul, 30);
+        this.mid.setDisplaySize(this.xAzul, 30);
 
         this.good = this.physics.add.image(position, 150, 'yellow');
         this.good.body.setAllowGravity(false);
-        this.good.setDisplaySize(xAzul/2, 30);
+        this.good.setDisplaySize(this.xAzul/2, 30);
 
         this.bar = this.physics.add.image(328, 150, 'bar');
         this.bar.body.setAllowGravity(false);
@@ -137,18 +137,20 @@ export default class BarQTE extends Phaser.Scene{
 
     selectDificultad(dificultad)
     {
-        this.xAzul = 50;
         if(dificultad === 'facil')
         {
             this.xAzul = 200;
+            this.speed = 300;
         } 
         else if(dificultad === 'medio')
         {
             this.xAzul = 100;
+            this.speed = 400;
         }
         else if(dificultad === 'dificil')
         {
             this.xAzul = 50;
+            this.speed = 500;
         }
     }
 
