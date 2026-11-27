@@ -18,7 +18,9 @@ export default class BarQTE extends Phaser.Scene{
 
         this.timeleft = this.time.delayedCall(5000, () => {
             console.log("Fallo");
-            this.scene.start('mainMenu' /*,{calidad: this.calidad}*/);
+            this.result = true;
+            this.bar.setVelocity(0, 0);
+
         })
 
         //Construye el QTE
@@ -42,31 +44,18 @@ export default class BarQTE extends Phaser.Scene{
 
             if (Phaser.Input.Keyboard.JustDown(this.espacio)) {this.checkCollision()}
 
-            if (this.bar.x >= 600) {
+            if (this.bar.x >= 618) {
                 this.bar.setVelocity(-this.speed, 0);
             }
 
-            if (this.bar.x <= 56) {
+            if (this.bar.x <= 38) {
                 this.bar.setVelocity(this.speed, 0);
             }
         }
 
         else
         {
-            this.time.delayedCall(1500, () => {
-                console.log("1,5 segundos despues del ataque");
-
-                //Barra tiempo
-                this.insideBar.width -= delta / 10;
-                this.color = Phaser.Display.Color.Interpolate.ColorWithColor(this.red, this.green, 1, this.insideBar.width / 600);
-                this.insideBar.setFillStyle(Phaser.Display.Color.GetColor(this.color.r, this.color.g, this.color.b));
-
-                this.scene.start('mainMenu' /*,{calidad: this.calidad}*/);
-                //this.scene.stop();
-                //this.finalizar(this.calidad);
-            });
-
-            this.timeleft.remove();
+            this.finEvento();
         }
     }
 
@@ -147,5 +136,16 @@ export default class BarQTE extends Phaser.Scene{
             this.xAzul = 50;
         }
         return this.xAzul;
+    }
+
+    finEvento()
+    {
+        this.time.delayedCall(1500, () => {
+                console.log("1,5 segundos despues del ataque");
+
+                this.scene.start('mainMenu' /*,{calidad: this.calidad}*/);
+            });
+
+            this.timeleft.remove();
     }
 }

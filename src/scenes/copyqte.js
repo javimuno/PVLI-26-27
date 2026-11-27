@@ -31,6 +31,7 @@ export default class CopyQTE extends Phaser.Scene{
 
         this.nFlechas = this.selectDificultad(this.dificultad);
         this.consrtuirFlechas(this.nFlechas);
+        this.inicializarBarraTiempo();
 
         this.step = 0;
 
@@ -49,6 +50,11 @@ export default class CopyQTE extends Phaser.Scene{
         }
 
         this.timeOnScreen.setText('Tiempo: ' + Math.ceil(this.timeleft.getRemainingSeconds()));
+
+        //Barra tiempo
+        this.insideBar.width -= delta / 10;
+        this.color = Phaser.Display.Color.Interpolate.ColorWithColor(this.red, this.green, 1, this.insideBar.width / 600);
+        this.insideBar.setFillStyle(Phaser.Display.Color.GetColor(this.color.r, this.color.g, this.color.b));
 
         if (Phaser.Input.Keyboard.JustDown(this.cursor.down)) {
 
@@ -100,6 +106,7 @@ export default class CopyQTE extends Phaser.Scene{
         if (this.step === this.nFlechas && !this.terminado) {
             this.terminado = true;
             this.calidad = 'Perfecto';
+
             this.timeleft.remove();
             this.time.delayedCall(1500, () => {
             this.scene.start('mainMenu'/*, {calidad: this.calidad}*/);
@@ -159,7 +166,7 @@ export default class CopyQTE extends Phaser.Scene{
 
     selectDificultad(dificultad)
     {
-        this.numFlechas = 4;
+        this.numFlechas = 7;
         if(dificultad === 'Facil')
         {
             this.numFlechas = 3;
@@ -173,5 +180,14 @@ export default class CopyQTE extends Phaser.Scene{
             this.numFlechas = 5;
         }
         return this.numFlechas;
+    }
+
+    inicializarBarraTiempo()
+    {
+        this.green = Phaser.Display.Color.ValueToColor(0x95ff00);
+        this.red = Phaser.Display.Color.ValueToColor(0xff0000);
+
+        this.insideBar = this.add.rectangle(325, 60, 600, 32, 0x95ff00);
+        this.add.image(328, 59, 'barTime');
     }
 }
