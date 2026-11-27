@@ -22,11 +22,11 @@ export default class CopyQTE extends Phaser.Scene{
 
         this.timeleft = this.time.delayedCall(5000, () => {
             console.log("Fallo");
-            this.scene.start('mainMenu'/*, {calidad: this.calidad}*/);
+            this.finEvento();
         })
         
         this.direccion = [];
-        this.green = [];
+        this.greenBox = [];
         this.arrow = [];
 
         this.nFlechas = this.selectDificultad(this.dificultad);
@@ -34,12 +34,6 @@ export default class CopyQTE extends Phaser.Scene{
         this.inicializarBarraTiempo();
 
         this.step = 0;
-
-        this.timeOnScreen = this.add.text(20, 20, 'Tiempo: 5.0', {
-        fontSize: '30px',
-        color: '#000000'
-        });
-
     }
 
     //actualizacion repetida mientras la escena esta activa
@@ -49,8 +43,6 @@ export default class CopyQTE extends Phaser.Scene{
             return;
         }
 
-        this.timeOnScreen.setText('Tiempo: ' + Math.ceil(this.timeleft.getRemainingSeconds()));
-
         //Barra tiempo
         this.insideBar.width -= delta / 10;
         this.color = Phaser.Display.Color.Interpolate.ColorWithColor(this.red, this.green, 1, this.insideBar.width / 600);
@@ -59,7 +51,7 @@ export default class CopyQTE extends Phaser.Scene{
         if (Phaser.Input.Keyboard.JustDown(this.cursor.down)) {
 
             if (this.direccion[this.step] == 0) {
-                this.green[this.step].setVisible(true);
+                this.greenBox[this.step].setVisible(true);
                 this.step++;
             }
             else {
@@ -71,7 +63,7 @@ export default class CopyQTE extends Phaser.Scene{
         else if (Phaser.Input.Keyboard.JustDown(this.cursor.right)) {
 
             if (this.direccion[this.step] == 1) {
-                this.green[this.step].setVisible(true);
+                this.greenBox[this.step].setVisible(true);
                 this.step++;
             }
             else {
@@ -83,7 +75,7 @@ export default class CopyQTE extends Phaser.Scene{
         else if (Phaser.Input.Keyboard.JustDown(this.cursor.up)) {
 
             if (this.direccion[this.step] == 2) {
-                this.green[this.step].setVisible(true);
+                this.greenBox[this.step].setVisible(true);
                 this.step++;
             }
             else {
@@ -95,7 +87,7 @@ export default class CopyQTE extends Phaser.Scene{
         else if (Phaser.Input.Keyboard.JustDown(this.cursor.left)) {
 
             if (this.direccion[this.step] == 3) {
-                this.green[this.step].setVisible(true);
+                this.greenBox[this.step].setVisible(true);
                 this.step++;
             }
             else {
@@ -104,23 +96,16 @@ export default class CopyQTE extends Phaser.Scene{
 
         }
         if (this.step === this.nFlechas && !this.terminado) {
-            this.terminado = true;
             this.calidad = 'Perfecto';
-
-            this.timeleft.remove();
-            this.time.delayedCall(1500, () => {
-            this.scene.start('mainMenu'/*, {calidad: this.calidad}*/);
-            //this.scene.stop();
-            //this.finalizar(this.calidad);
-        });
-    }
+            this.finEvento();
+        }
 
 
     }
 
     reiniciar() 
     {
-        for(let i = 0; i < this.nFlechas; i++) {this.green[i].setVisible(false);}
+        for(let i = 0; i < this.nFlechas; i++) {this.greenBox[i].setVisible(false);}
 
         this.step = 0;
     }
@@ -150,10 +135,10 @@ export default class CopyQTE extends Phaser.Scene{
         this.x = 656 / (this.nFlechas + 1);
         for(let i = 0; i < this.nFlechas; i++)
         {
-            this.green[i] = this.physics.add.image(this.x * (i + 1), 188, 'green');
-            this.green[i].body.setAllowGravity(false);
-            this.green[i].setDisplaySize(90, 90);
-            this.green[i].setVisible(false);
+            this.greenBox[i] = this.physics.add.image(this.x * (i + 1), 188, 'green');
+            this.greenBox[i].body.setAllowGravity(false);
+            this.greenBox[i].setDisplaySize(90, 90);
+            this.greenBox[i].setVisible(false);
 
             this.arrow[i] = this.physics.add.image(this.x * (i + 1), 188, 'arrow');
             this.arrow[i].body.setAllowGravity(false);
@@ -162,20 +147,22 @@ export default class CopyQTE extends Phaser.Scene{
             this.direccion[i] = this.aleatorio(this.arrow[i]);
         }
 
+        console.log(this.nFlechas);
+
     }
 
     selectDificultad(dificultad)
     {
-        this.numFlechas = 7;
-        if(dificultad === 'Facil')
+        this.numFlechas = 4;
+        if(dificultad === 'facil')
         {
             this.numFlechas = 3;
         } 
-        else if(dificultad === 'Medio')
+        else if(dificultad === 'medio')
         {
             this.numFlechas = 4;
         }
-        else if(dificultad === 'Dificil')
+        else if(dificultad === 'dificil')
         {
             this.numFlechas = 5;
         }
@@ -189,5 +176,17 @@ export default class CopyQTE extends Phaser.Scene{
 
         this.insideBar = this.add.rectangle(325, 60, 600, 32, 0x95ff00);
         this.add.image(328, 59, 'barTime');
+    }
+
+    finEvento()
+    {
+        this.terminado = true;
+        this.time.delayedCall(1500, () => {
+                console.log("1,5 segundos despues del ataque");
+
+                this.scene.start('mainMenu' /*,{calidad: this.calidad}*/);
+            });
+
+            this.timeleft.remove();
     }
 }
