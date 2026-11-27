@@ -23,6 +23,7 @@ export default class MainMenu extends Phaser.Scene{
         this.load.image('green', 'assets/green.png');
         this.load.image('dCards', 'assets/discordCard.png');
         this.load.image('barTime', 'assets/timeBar.png');
+        this.load.image('fence', 'assets/fence.png');
 
         this.load.text('discordOpt', 'assets/opcionesDiscord.txt');
 
@@ -37,7 +38,7 @@ export default class MainMenu extends Phaser.Scene{
         this.button.setDisplaySize(250, 78);
 
         this.button.on('pointerdown', pointer =>{
-            this.scene.start('minimap');
+            this.scene.start('minimap', {progress : 1});
         })
 
     }
