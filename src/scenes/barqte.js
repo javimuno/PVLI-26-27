@@ -15,6 +15,7 @@ export default class BarQTE extends Phaser.Scene{
         this.speed = 400;
         this.result = false;
         this.calidad = 'fallo';
+        this.xAzul = 200;
 
         this.fondo2 = this.add.image(328, 188, 'playerCube');
         this.fondo2.setDisplaySize(656, 376);
@@ -136,7 +137,7 @@ export default class BarQTE extends Phaser.Scene{
 
     selectDificultad(dificultad)
     {
-        this.xAzul = -500;
+        this.xAzul = 50;
         if(dificultad === 'facil')
         {
             this.xAzul = 200;
@@ -149,17 +150,18 @@ export default class BarQTE extends Phaser.Scene{
         {
             this.xAzul = 50;
         }
-        return this.xAzul;
     }
 
     finEvento()
     {
-        this.time.delayedCall(1500, () => {
-                console.log("1,5 segundos despues del ataque");
+        this.bar.setVelocity(0, 0);
+        this.timeleft.remove();
+        
+        this.time.delayedCall(1500, () => 
+        {
+            console.log("1,5 segundos despues del ataque");
 
-                this.scene.start('mainMenu' /*,{calidad: this.calidad}*/);
-            });
-
-            this.timeleft.remove();
+            this.scene.start('mainMenu' /*,{calidad: this.calidad}*/);
+        });
     }
 }
