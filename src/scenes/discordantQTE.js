@@ -5,73 +5,73 @@ export default class DiscordantQte extends Phaser.Scene{
         super({key:'discord'})
     }
 
-    init() {
+    init(datos) {
+        this.finalizar = datos.finalizar;
     }
 
     create() {
+        // Contador inicial
         this.timeleft = this.time.delayedCall(8000, () => {
             console.log("Fallo");
             this.scene.start('mainMenu');
         })
 
+        //Lectura de opcionesDiscord.txt
         const texto = this.cache.text.get('discordOpt');
         const lineas = texto.trim().split(/\r?\n/);
         this.guay = lineas[0].trim().split(/\s+/);
         this.noguay = lineas[1].trim().split(/\s+/);
 
-        let correcto = Phaser.Math.Between(0, 2);
-        this.acierto = 0;
-        this.fin = false;
+        //Variables
+        this.cardsNum = 4;
+        let correcto = Phaser.Math.Between(0, this.cardsNum - 1); //Aleatorio que elige el QTECard correcto
+        this.acierto = 0; //¿Ha acertado? Por defecto 0
+        this.fin = false; //Estado del QTE
+        this.superado = 0;
         this.green = Phaser.Display.Color.ValueToColor(0x95ff00);
         this.red = Phaser.Display.Color.ValueToColor(0xff0000);
+        this.option = []; //Array en el que se crearán los QTECards
+        this.cardsPos = 656 / (this.cardsNum + 1);
+        this.nextCard = this.cardsPos;
 
+        //Creación de fondo y barra de tiempo
         this.fondo2 = this.add.image(328, 188, 'playerCube');
-        this.insideBar = this.add.rectangle(325, 60, 600, 32, 0x95ff00);
+        this.insideBar = this.add.rectangle(325, 60, 600, 32, '#95ff00');
         this.add.image(328, 59, 'barTime');
-        
-        this.option = [];
 
-        this.option[0] = new QTECards(this, 164, 188, 'dCards');
-        this.option[0].on('pointerdown', pointer =>{
-            if(!this.fin){
-                if(correcto == 0) this.acierto = 1;
-                else this.acierto = 2;
-            }
-        })
-
-        this.option[1] = new QTECards(this, 328, 188, 'dCards');
-        this.option[1].on('pointerdown', pointer =>{
-            if(!this.fin){
-                if(correcto == 1) this.acierto = 1;
-                else this.acierto = 2;
-            }
-        })
-
-        this.option[2] = new QTECards(this, 492, 188, 'dCards');
-        this.option[2].on('pointerdown', pointer =>{
-            if(!this.fin){
-                if(correcto == 2) this.acierto = 1;
-                else this.acierto = 2;
-            }
-        })
-
-        for(let i = 0; i < 3; i++) {
+        //Instance de QTECards y su interactuabilidad
+        for(let i = 0; i < this.cardsNum; i++){
+            this.option[i] = new QTECards(this, this.nextCard, 200, 'dCards'); //QTECard 1
+            this.option[i].on('pointerdown', pointer =>{
+                if(!this.fin){
+                    if(correcto == i) this.acierto = 1;
+                    else this.acierto = 2;
+                }
+            })
+            this.nextCard += this.cardsPos;
+        }
+               
+        //Asignación de opciones
+        for(let i = 0; i < this.cardsNum; i++) {  
             if(i != correcto) this.option[i].changeText(Phaser.Utils.Array.GetRandom(this.guay));
             else this.option[i].changeText(Phaser.Utils.Array.GetRandom(this.noguay));
         }
 
-        this.timeOnScreen = 6;
+        this.timeOnScreen = 6; //Tiempo en pantalla
         
+        //Texto informativo
         this.textoCorrecto = this.add.text(328, 300, '¿Cuál no pertenece?', {
-            fontSize: '30px', color: '#000000'
+            fontSize: '30px', color: '#ffffff', fontStyle: 'bold'
         }).setOrigin(0.5, 0)
     }   
 
     update(t, dt){
-        if(!this.fin){
+        if(!this.fin){ //Mientras no se ha ejecutado la escena
             if(this.acierto == 1){
             this.textoCorrecto.setText('Acertaste');
             this.fin = true;
+            if(this.superado < 2) this.superado = 1;
+            //this.finalizar('bien');
             }else if(this.timeOnScreen > 0.1 && this.acierto != 2){
             this.timeOnScreen -= dt / 1000;
             this.insideBar.width -= dt / 10;
@@ -80,10 +80,11 @@ export default class DiscordantQte extends Phaser.Scene{
             }else {
             this.textoCorrecto.setText('Fallaste');
             this.fin = true;
+            //this.finalizar('mal');
             }
-        }else {
+        }else { //Finaliza la escena
             this.timeleft = this.time.delayedCall(1000, () => {
-            this.scene.start('minimap');
+            this.scene.start('minimap', {progress : this.superado});
             })
         } 
     }

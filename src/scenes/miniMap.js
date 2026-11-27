@@ -8,7 +8,8 @@ export default class MiniMap extends Phaser.Scene{
         super ({key: 'minimap'});
     }
     //inicializacion de escenas
-    init (){
+    init (data){
+        this.progress = data.progress;
     }
     //carga de imagenes, sonidos y recursos
     preload(){
@@ -17,7 +18,9 @@ export default class MiniMap extends Phaser.Scene{
     create() {
         this.background = this.add.image(-40,0, 'miniMapBack').setOrigin(0, 0);
         this.background.setDisplaySize(700, 400);
-        this.physics.world.setBounds(50, 95, 565, 260);
+        
+
+        this.setBounds();
 
         this.playerCube = new PlayerMap(this, 100, 150, 'minimapchar');
         this.levelPad1 = new LevelPad(this, 172, 300, 'levelPadColor');
@@ -38,6 +41,19 @@ export default class MiniMap extends Phaser.Scene{
         
     }
 
+    setBounds(){
+        if(this.progress < 2) {
+            let fence = this.add.image(275, 225, 'fence');
+            fence.setDisplaySize(21, 291);
+
+            if(this.progress == 1) {
+                fence.x = 450;
+                this.physics.world.setBounds(50, 95, 385, 260);   
+            }
+            else this.physics.world.setBounds(50, 95, 210, 260);
+        } 
+        else this.physics.world.setBounds(50, 95, 565, 260);
+    }
 
 
 
