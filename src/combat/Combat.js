@@ -182,6 +182,16 @@ console.log('Favor del público:', this.favorPublico);
             danioBloqueado: danioBloqueado
         };
 
+        console.log('COMPROBACIÓN DAÑO ENEMIGO', {
+    favorAntes: this.favorPublico,
+    danioBase: danioBase,
+    calidad: resultadoQTE,
+    danioFinal: danio,
+    auraAnterior: auraAnterior,
+    auraRestante: this.auraJugador,
+    danioBloqueado: danioBloqueado
+});
+
         // completa info
         if (ataque !== null) {
             this.ultimaAccion.familia = ataque.familia;
