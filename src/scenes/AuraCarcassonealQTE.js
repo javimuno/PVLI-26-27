@@ -8,6 +8,11 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
         this.dificultad = datos.dificultad || 'facil';
         this.finalizar = datos.finalizar;
         this.terminado = false;
+
+        //Respuestas introducidas por el jugador
+        this.respuestas = {};
+        //Hueco seleccionado actualmente
+        this.huecoSeleccionado = null;
     }
 
     create() {
@@ -66,6 +71,14 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
         console.log('Huecos:', this.huecos);
         console.table(this.piezasOfrecidas);
         console.log('Soluciones:', this.soluciones);
+
+        // Detectamos las pulsaciones del teclado durante el QTE
+        this.input.keyboard.on('keydown', this.procesarTecla, this);
+
+        // Eliminamos el evento cuando se cierra la escena
+        this.events.once('shutdown', () => {
+            this.input.keyboard.off('keydown', this.procesarTecla, this);
+});
     }
 
     
@@ -142,7 +155,9 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
 
     crearTablero() {
 
-        
+        // Guardamos los objetos gráficos de los huecos para modificarlos después
+        this.fichasHuecos = {};
+        this.textosHuecos = {};
 
         // Tres filas con cuatro piezas cada una
         for (let fila = 0; fila < 3; fila++) {
@@ -157,7 +172,8 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
 
                 let color = esHueco ? 0x182033 : 0x38516b;
 
-                this.add.polygon(x, y, this.puntosHexagono, color)
+                //Fichas propiamente
+                let ficha = this.add.polygon(x, y, this.puntosHexagono, color)
                 .setOrigin(0.5)
                 .setStrokeStyle(2, 0xffd166);
 
@@ -169,11 +185,20 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
                 else {
                     texto = 'P' + pieza;
                 }
-
-                this.add.text(x, y, texto, {
+               
+                let etiqueta = this.add.text(x, y, texto, {
                     fontSize: '14px',
                     color: '#ffffff'
                 }).setOrigin(0.5).setDepth(1);
+
+
+                if (esHueco) {
+
+                    let numero = this.huecos.indexOf(pieza) + 1;
+
+                    this.fichasHuecos[numero] = ficha;
+                    this.textosHuecos[numero] = etiqueta;
+                }
             }
         }
     }
@@ -207,5 +232,123 @@ export default class AuraCarcassonealQTE extends Phaser.Scene {
                 color: '#ffd166'
             }).setOrigin(0.5).setDepth(1);
         }
+    }
+
+    procesarTecla(evento) {
+
+        if (this.terminado || evento.repeat) {
+            return;
+        }
+
+        let tecla = evento.key.toUpperCase();
+        
+        // Confirmamos las respuestas introducidas
+        if (tecla === 'ENTER') {
+            this.comprobarResultado();
+            return;
+        }
+
+        let numero = Number(tecla);
+
+        // Seleccionamos un hueco válido
+        if (Number.isInteger(numero) &&
+            numero >= 1 &&
+            numero <= this.huecos.length) {
+
+            this.huecoSeleccionado = numero;
+
+            console.log('Hueco seleccionado:', numero);
+            return;
+        }
+
+        // No podemos colocar una pieza sin seleccionar un hueco
+        if (this.huecoSeleccionado === null) {
+            return;
+        }
+
+        // Comprobamos si la letra pertenece a una pieza ofrecida
+        for (let i = 0; i < this.piezasOfrecidas.length; i++) {
+
+            if (tecla === this.piezasOfrecidas[i].letra) {
+
+                this.colocarPieza(this.huecoSeleccionado, tecla);
+                this.huecoSeleccionado = null;
+                return;
+            }
+        }
+    }
+
+    colocarPieza(numero, letra) {
+
+        // Si la pieza ya estaba colocada, liberamos su hueco anterior
+        for (let i = 1; i <= this.huecos.length; i++) {
+
+            if (this.respuestas[i] === letra) {
+                delete this.respuestas[i];
+            }
+        }
+
+        this.respuestas[numero] = letra;
+        
+        //Actualizamos 
+        this.actualizarTablero();
+
+        console.log('Respuestas:', this.respuestas);
+    }
+
+    actualizarTablero() {
+
+        for (let numero = 1; numero <= this.huecos.length; numero++) {
+
+            let letra = this.respuestas[numero];
+
+            // Si el hueco no tiene pieza, recuperamos su aspecto original
+            if (letra === undefined) {
+
+                this.fichasHuecos[numero].setFillStyle(0x182033);
+                this.textosHuecos[numero].setText(String(numero));
+            }
+            else {
+
+                // Buscamos la pieza asociada a la letra introducida
+                let pieza = this.piezasOfrecidas.find(p => p.letra === letra);
+
+                this.fichasHuecos[numero].setFillStyle(0x38516b);
+
+                this.textosHuecos[numero].setText(
+                    numero + letra + '\nP' + pieza.pieza
+                );
+            }
+        }
+    }
+
+
+    comprobarResultado() {
+
+        let aciertos = 0;
+
+        // Comparamos las respuestas del jugador con las soluciones
+        for (let i = 1; i <= this.huecos.length; i++) {
+
+            if (this.respuestas[i] === this.soluciones[i]) {
+                aciertos++;
+            }
+        }
+
+        let porcentaje = aciertos / this.huecos.length;
+
+        let calidad = 'fallo';
+
+        if (porcentaje === 1) {
+            calidad = 'perfecto';
+        }
+        else if (porcentaje >= 0.5) {
+            calidad = 'bien';
+        }
+
+        console.log('Aciertos:', aciertos);
+        console.log('Resultado:', calidad);
+
+        this.terminarQTE(calidad);
     }
 }
